@@ -39,6 +39,9 @@ CREATE TABLE IF NOT EXISTS public.chat_users
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     chat_id uuid,
     user_id uuid,
+    blocked BOOLEAN NOT NULL DEFAULT FALSE,
+    invitation_accepted BOOLEAN NOT NULL DEFAULT FALSE,
+    creator BOOLEAN NOT NULL,
     CONSTRAINT chat_id_fk FOREIGN KEY(chat_id) REFERENCES chats(id),
     CONSTRAINT user_id_fk FOREIGN KEY(user_id) REFERENCES users(id)
 );
@@ -57,4 +60,18 @@ CREATE TABLE IF NOT EXISTS public.messages
 );
 
 ALTER TABLE IF EXISTS public.messages
+    OWNER to postgres;
+
+---------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS public.user_blockings
+(
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id uuid,
+    blocked_user_id uuid,
+    CONSTRAINT user_id_fk FOREIGN KEY(user_id) REFERENCES users(id),
+    CONSTRAINT blocked_user_id_fk FOREIGN KEY(blocked_user_id) REFERENCES users(id)
+);
+
+ALTER TABLE IF EXISTS public.user_blockings
     OWNER to postgres;
