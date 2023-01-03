@@ -13,7 +13,7 @@ CREATE DATABASE "chat_app"
 CREATE TABLE IF NOT EXISTS public.users
 (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_name VARCHAR(50) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
     user_password VARCHAR(200) NOT NULL,
     user_role VARCHAR(50) NOT NULL
 );

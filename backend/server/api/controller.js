@@ -42,44 +42,8 @@ function broadcast(event, data) {
     }
 }
 
-/* app.post('/login', (req, res) => {
-    if (!acl('login', req)) {
-        res.status(405);
-        res.json({ _error: 'Not allowed' });
-    }
-    req.body[passwordField] =
-        passwordEncryptor(req.body[passwordField]);
-    let stmt = db.prepare(`
-      SELECT * FROM customers
-      WHERE email = :email AND password = :password
-    `);
-    let result = stmt.all(req.body)[0] || { _error: 'No such user.' };
-    delete result.password;
-    if (!result._error) {
-        req.session.user = result;
-    }
-    res.json(result);
-});
-
-app.get('/login', (req, res) => {
-    if (!acl('login', req)) {
-        res.status(405);
-        res.json({ _error: 'Not allowed' });
-    }
-    res.json(req.session.user || { _error: 'Not logged in' });
-});
-
-app.delete('/login', (req, res) => {
-    if (!acl('login', req)) {
-        res.status(405);
-        res.json({ _error: 'Not allowed' });
-    }
-    delete req.session.user;
-    res.json({ success: 'logged out' });
-}); */
-
 const createUser = async (req, res) => {
-    if (!req.body.userName || !req.body.password || !req.body.userRole) {
+    if (!req.body.username || !req.body.password || !req.body.userRole) {
         res.status(500).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
@@ -88,29 +52,25 @@ const createUser = async (req, res) => {
         //const hashedPassword = bcrypt.hashSync(req.body.password, 10)
         const query = await db.query(
             `
-                INSERT INTO users (user_name, user_password, user_role) 
+                INSERT INTO users (username, user_password, user_role) 
                 VALUES($1, $2, $3)
                 RETURNING *
             `,
-            [req.body.userName, req.body.password, req.body.userRole]
+            [req.body.username, req.body.password, req.body.userRole]
         );
 
         if (query.rows.length === 0) {
             return res.status(403);
         }
         const user = query.rows[0];
-        console.log(user);
-        console.log(user.id);
-        console.log(user.user_name);
-        console.log(user.user_role);
 
         req.session.user = {
             id: user.id,
-            userName: user.user_name,
+            username: user.username,
             userRole: user.user_role,
         }
 
-        res.status(200).json({ success: true, user: req.session.user });
+        res.status(200).json({ user: req.session.user });
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -118,15 +78,65 @@ const createUser = async (req, res) => {
 }
 
 const loginUser = async (req, res) => {
-    if (!req) {
+    if (!req.body.username || !req.body.password) {
         res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        return;
     }
 
     try {
+        const query = await db.query(
+            `
+                SELECT id, username, user_role, user_password
+                FROM users
+                WHERE username = $1
+            `,
+            [req.body.username]
+        );
+        console.log(query.rows[0]);
 
+        if (query.rows.length === 0) {
+            res.status(403);
+            return;
+        }
+        const user = query.rows[0];
+
+        //const correctPassword = bcrypt.compareSync(req.body.password, user.password);
+        const correctPassword = req.body.password === user.user_password;
+        console.log(correctPassword);
+        if (!correctPassword) {
+            res.status(403);
+            return;
+        }
+
+        req.session.user = {
+            id: user.id,
+            userName: user.username,
+            userRole: user.user_role,
+        }
+
+        res.status(200).json({ user: req.session.user });
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+const getLoggedInUser = async (req, res) => {
+    if (req.sessionID && req.session.user) {
+        res.status(200).json({ user: req.session.user });
+    }
+    else {
+        res.status(403).json({ success: false });
+    }
+}
+
+const logoutUser = async (req, res) => {
+    try {
+        await req.session.destroy();
+        res.status(200).json({ success: true, result: 'Logged out' });
+    }
+    catch (err) {
+        res.status(500).json({ success: false });
     }
 }
 
@@ -265,6 +275,8 @@ module.exports = {
     sse,
     createUser,
     loginUser,
+    getLoggedInUser,
+    logoutUser,
     blockUser,
     getChats,
     createChat,

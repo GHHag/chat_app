@@ -9,13 +9,6 @@ const api_url = process.env.API_URL;
 
 const server = express();
 
-//server.use(bodyParser.urlencoded());
-//server.use(bodyParser.json());
-server.use(express.json({ limit: '100MB' }));
-server.use(api_url, router);
-
-server.listen(port, () => console.log(`Server live at ${port}`));
-
 let salt = 'someUnusualStringThatIsUniqueForThisProject';
 
 if (!process.env.COOKIE_SALT) {
@@ -52,3 +45,10 @@ server.use(session({
     //store: router.store
     store: store
 }));
+
+//server.use(bodyParser.urlencoded());
+//server.use(bodyParser.json());
+server.use(express.json({ limit: '100MB' }));
+server.use(api_url, router);
+
+server.listen(port, () => console.log(`Server live at ${port}`));

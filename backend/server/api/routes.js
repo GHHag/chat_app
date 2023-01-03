@@ -6,6 +6,8 @@ router.get('/sse', controller.sse);
 
 router.post('/user/create-user', controller.createUser);
 router.post('/user/login', controller.loginUser);
+router.get('/user/login', controller.getLoggedInUser);
+router.post('/user/logout', controller.logoutUser);
 router.post('/user/block/:id', controller.blockUser);
 
 router.get('/chats/:id', controller.getChats);
