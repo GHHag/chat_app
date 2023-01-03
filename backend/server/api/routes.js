@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./controller');
 
+router.get('/sse', controller.sse);
+
 router.post('/user/create-user', controller.createUser);
 router.post('/user/login', controller.loginUser);
 router.post('/user/block/:id', controller.blockUser);
@@ -15,5 +17,9 @@ router.post('/chat/ban/:id', controller.banFromChat);
 router.post('/chat/message', controller.sendMessage);
 router.get('/chat/messages/:id', controller.getChatMessages);
 router.delete('/chat/delete-message/:id', controller.deleteMessage);
+
+router.store = () => {
+    router.post('/store-session', controller.storeSession);
+}
 
 module.exports = router;

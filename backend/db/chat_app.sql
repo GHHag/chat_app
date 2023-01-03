@@ -75,3 +75,15 @@ CREATE TABLE IF NOT EXISTS public.user_blockings
 
 ALTER TABLE IF EXISTS public.user_blockings
     OWNER to postgres;
+
+---------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS public.sessions
+(
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    session TEXT,
+    last_update DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE IF EXISTS public.sessions
+    OWNER to postgres;
