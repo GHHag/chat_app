@@ -30,6 +30,19 @@ else {
     salt = process.env.COOKIE_SALT;
 }
 
+const conObject = {
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    port: process.env.DATABASE_PORT,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME
+}
+const conString = `${process.env.DATABASE_USER}://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE_NAME}`;
+
+const store = new (require('connect-pg-simple')(session))(
+    { conObject, conString: conString }
+);
+
 server.use(session({
     secret: salt,
     resave: false,
@@ -37,4 +50,5 @@ server.use(session({
     cookie: { secure: 'auto' },
     //store: store({ dbPath: './database/bookshop.db' })
     //store: router.store
+    store: store
 }));

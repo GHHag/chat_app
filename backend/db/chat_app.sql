@@ -78,7 +78,7 @@ ALTER TABLE IF EXISTS public.user_blockings
 
 ---------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS public.sessions
+/*CREATE TABLE IF NOT EXISTS public.sessions
 (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     session TEXT,
@@ -86,4 +86,14 @@ CREATE TABLE IF NOT EXISTS public.sessions
 );
 
 ALTER TABLE IF EXISTS public.sessions
-    OWNER to postgres;
+    OWNER to postgres;*/
+CREATE TABLE "session" (
+  "sid" varchar NOT NULL COLLATE "default",
+  "sess" json NOT NULL,
+  "expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+
+ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX "IDX_session_expire" ON "session" ("expire");

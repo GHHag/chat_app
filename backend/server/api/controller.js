@@ -1,4 +1,4 @@
-require('./db');
+const db = require('./db');
 
 let connections = [];
 
@@ -78,17 +78,39 @@ app.delete('/login', (req, res) => {
     res.json({ success: 'logged out' });
 }); */
 
-const storeSession = async (req, res) => {
-    console.log('STORE SESSION');
-}
-
 const createUser = async (req, res) => {
-    if (!req) {
+    if (!req.body.userName || !req.body.password || !req.body.userRole) {
         res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        return;
     }
 
     try {
+        //const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+        const query = await db.query(
+            `
+                INSERT INTO users (user_name, user_password, user_role) 
+                VALUES($1, $2, $3)
+                RETURNING *
+            `,
+            [req.body.userName, req.body.password, req.body.userRole]
+        );
 
+        if (query.rows.length === 0) {
+            return res.status(403);
+        }
+        const user = query.rows[0];
+        console.log(user);
+        console.log(user.id);
+        console.log(user.user_name);
+        console.log(user.user_role);
+
+        req.session.user = {
+            id: user.id,
+            userName: user.user_name,
+            userRole: user.user_role,
+        }
+
+        res.status(200).json({ success: true, user: req.session.user });
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -241,7 +263,6 @@ const deleteMessage = async (req, res) => {
 
 module.exports = {
     sse,
-    storeSession,
     createUser,
     loginUser,
     blockUser,
