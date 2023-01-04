@@ -1,17 +1,32 @@
 {
     "visitor": {
+        "user/register": {
+            "post": true
+        },
         "user/login": {
-            "post": true,
-            "get": true
+            "post": true
         }
     },
     "user": {
+        "user/register": {
+            "post": false
+        },
         "user/login": {
-            "get": true,
+            "get": true
+        },
+        "user/logout": {
             "delete": true
         },
-        "user/edit-my-user-info": {
-            "put": true
+        "user/block": {
+            "post": true
+        },
+        "chats": {
+            "get": true
+        },
+        "chat/*": {
+            "post": true,
+            "get": true,
+            "delete": true
         }
     },
     "superadmin": {

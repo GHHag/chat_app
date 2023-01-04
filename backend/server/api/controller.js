@@ -1,5 +1,6 @@
 const db = require('./db');
 const passwordEncryptor = require('../../security/passwordEncryptor');
+const acl = require('../../security/acl');
 
 let connections = [];
 
@@ -43,9 +44,14 @@ function broadcast(event, data) {
     }
 }
 
-const createUser = async (req, res) => {
+const registerUser = async (req, res) => {
     if (!req.body.username || !req.body.password || !req.body.userRole) {
         res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        return;
+    }
+
+    if (!acl('user/register', req)) {
+        res.status(405).json({ error: 'Not allowed' });
         return;
     }
 
@@ -271,7 +277,7 @@ const deleteMessage = async (req, res) => {
 
 module.exports = {
     sse,
-    createUser,
+    registerUser,
     loginUser,
     getLoggedInUser,
     logoutUser,
