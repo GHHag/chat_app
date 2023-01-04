@@ -1,47 +1,61 @@
 {
     "visitor": {
-        "user/register": {
+        "/user/register": {
             "post": true
         },
-        "user/login": {
+        "/user/login": {
             "post": true
         }
     },
     "user": {
-        "user/register": {
-            "post": false
-        },
-        "user/login": {
+        "/user/login": {
             "get": true
         },
-        "user/logout": {
+        "/user/logout": {
             "delete": true
         },
-        "user/block": {
+        "/user/block/:id": {
             "post": true
         },
-        "chats": {
+        "/chats": {
             "get": true
         },
-        "chat/*": {
+        "/chat/create": {
+            "post": true
+        },
+        "/chat/invite/": {
             "post": true,
-            "get": true,
+            "get": true
+        },
+        "/chat/invites/:id": {
+            "get": true
+        },
+        "/chat/accept-invite": {
+            "post": true
+        },
+        "/chat/ban/:id": {
+            "post": true
+        },
+        "/chat/message": {
+            "post": true
+        },
+        "/chat/messages/:id": {
+            "get": true
+        },
+        "/chat/delete-message/:id": {
             "delete": true
         }
     },
     "superadmin": {
-        "user/users": {
+        "/user/users": {
             "get": true,
             "post": true,
             "put": true,
             "delete": true
         },
-        "login": {
+        "/login": {
             "get": true,
             "delete": true
-        },
-        "edit-my-user-info": {
-            "put": true
         }
     }
 }

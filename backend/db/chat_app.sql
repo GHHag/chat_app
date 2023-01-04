@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.chat_users
     user_id uuid,
     blocked BOOLEAN NOT NULL DEFAULT FALSE,
     invitation_accepted BOOLEAN NOT NULL DEFAULT FALSE,
-    creator BOOLEAN NOT NULL,
+    creator BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT chat_id_fk FOREIGN KEY(chat_id) REFERENCES chats(id),
     CONSTRAINT user_id_fk FOREIGN KEY(user_id) REFERENCES users(id)
 );

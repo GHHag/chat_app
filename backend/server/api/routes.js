@@ -8,13 +8,14 @@ router.post('/user/register', controller.registerUser);
 router.post('/user/login', controller.loginUser);
 router.get('/user/login', controller.getLoggedInUser);
 router.delete('/user/logout', controller.logoutUser);
-router.post('/user/block/:id', controller.blockUser);
+router.post('/user/block', controller.blockUser);
 
-router.get('/chats/:id', controller.getChats);
+router.get('/chats', controller.getChats);
 
 router.post('/chat/create', controller.createChat);
-router.post('/chat/invite/:id', controller.inviteToChat);
-router.post('/chat/accept-invite/:id', controller.acceptChatInvite);
+router.post('/chat/invite/', controller.inviteToChat);
+router.get('/chat/invites', controller.getChatInvites);
+router.post('/chat/accept-invite', controller.acceptChatInvite);
 router.post('/chat/ban/:id', controller.banFromChat);
 router.post('/chat/message', controller.sendMessage);
 router.get('/chat/messages/:id', controller.getChatMessages);
