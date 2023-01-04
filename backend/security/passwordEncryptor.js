@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `${process.cwd()}/../../.env` });
 const crypto = require('crypto');
 
 let salt = 'shouldBeHardToGuessAndUniqueForEachProjectAHAHAAHaba@132';

@@ -1,4 +1,5 @@
 const db = require('./db');
+const passwordEncryptor = require('../../security/passwordEncryptor');
 
 let connections = [];
 
@@ -49,14 +50,14 @@ const createUser = async (req, res) => {
     }
 
     try {
-        //const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+        const hashedPassword = passwordEncryptor(req.body.password);
         const query = await db.query(
             `
                 INSERT INTO users (username, user_password, user_role) 
                 VALUES($1, $2, $3)
                 RETURNING *
             `,
-            [req.body.username, req.body.password, req.body.userRole]
+            [req.body.username, hashedPassword, req.body.userRole]
         );
 
         if (query.rows.length === 0) {
@@ -92,19 +93,16 @@ const loginUser = async (req, res) => {
             `,
             [req.body.username]
         );
-        console.log(query.rows[0]);
 
         if (query.rows.length === 0) {
-            res.status(403);
+            res.status(403).json({ success: false, error: 'User not found' });
             return;
         }
         const user = query.rows[0];
 
-        //const correctPassword = bcrypt.compareSync(req.body.password, user.password);
-        const correctPassword = req.body.password === user.user_password;
-        console.log(correctPassword);
+        const correctPassword = passwordEncryptor(req.body.password) === user.user_password;
         if (!correctPassword) {
-            res.status(403);
+            res.status(403).json({ success: false, error: 'Incorrect password' });
             return;
         }
 

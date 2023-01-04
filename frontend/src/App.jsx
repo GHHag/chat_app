@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import './App.css';
+import '../scss/App.scss';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Chat from './pages/Chat';
+import Header from './components/Header';
 
 function App() {
 
@@ -27,8 +32,16 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-    </div>
+    <main>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/chat' element={<Chat />} />
+        </Routes >
+      </BrowserRouter >
+    </main >
   );
 }
 

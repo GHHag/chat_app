@@ -1,7 +1,6 @@
 require('dotenv').config({ path: `${process.cwd()}/../../.env` });
 const express = require('express');
 const session = require('express-session');
-//const bodyParser = require('body-parser');
 const router = require('./api/routes');
 
 const port = process.env.BACKEND_HTTP_PORT;
@@ -41,13 +40,9 @@ server.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: { secure: 'auto' },
-    //store: store({ dbPath: './database/bookshop.db' })
-    //store: router.store
     store: store
 }));
 
-//server.use(bodyParser.urlencoded());
-//server.use(bodyParser.json());
 server.use(express.json({ limit: '100MB' }));
 server.use(api_url, router);
 
