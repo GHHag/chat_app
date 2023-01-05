@@ -8,19 +8,19 @@ import Header from './components/Header';
 
 function App() {
   /* let userContext = useContext("");
-  console.log(userContext);
+console.log(userContext);
 
-  useEffect(() => {
-    const getUser = async () => {
-      const response = await fetch(`/api/user/login`, { method: 'GET' });
-      //const response = await fetch(`http://localhost:3000/api/user/login`, { method: 'GET' });
-      const responseJson = await response.json();
-      console.log(responseJson);
-      userContext = responseJson;
-    }
+useEffect(() => {
+  const getUser = async () => {
+    const response = await fetch(`/api/user/login`, { method: 'GET' });
+    //const response = await fetch(`http://localhost:3000/api/user/login`, { method: 'GET' });
+    const responseJson = await response.json();
+    console.log(responseJson);
+    userContext = responseJson;
+  }
 
-    getUser();
-  }, []); */
+  getUser();
+}, []); */
 
   const startSSE = () => {
     let sse = new EventSource('/api/sse');

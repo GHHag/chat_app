@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import postFormData from '../../fetch-utils';
 
 const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -28,7 +29,7 @@ const RegisterForm = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log('user session data??', data);
+        console.log('user session data:', data);
       })
       .catch((err) => {
         console.log(err.message);

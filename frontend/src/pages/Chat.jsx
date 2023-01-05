@@ -8,7 +8,6 @@ import ChatWindow from '../components/Chat-window';
 const Chat = () => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
-  const [selectedChatMessages, setSelectedChatMessages] = useState([]);
 
   useEffect(() => {
     const getChats = async () => {
@@ -27,15 +26,6 @@ const Chat = () => {
     getChats();
   }, []);
 
-  const getChatMessages = async (chatId) => {
-    console.log(chatId);
-    /* const getChatMessagesResponse = await fetch(
-      `/api/chat/message/${chatId}`
-    );
-    const chatMessagesJson = await getChatMessagesResponse.result.json();
-    setSelectedChatMessages(chatMessagesJson); */
-  }
-
   return (
     <>
       <main>
@@ -44,7 +34,7 @@ const Chat = () => {
           {
             chats && chats.map((chat, id) => (
               <Row key={id}>
-                <Button key={id} onClick={() => { setSelectedChat(chat); getChatMessages(chat.id); }}>
+                <Button key={id} onClick={() => { setSelectedChat(chat); console.log('Show messages for chat: ', chat) }}>
                   {chat.chat_subject}
                 </Button>
               </Row>
@@ -55,6 +45,7 @@ const Chat = () => {
           selectedChat &&
           <Card>
             <h3>{selectedChat.chat_subject}</h3>
+            <ChatWindow chatData={selectedChat}></ChatWindow>
           </Card>
         }
       </main>

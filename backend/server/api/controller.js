@@ -36,6 +36,7 @@ const sse = async (req, res) => {
 
 // function to send message to all connected clients
 function broadcast(event, data) {
+    console.log('broadcast event,', data);
     // loop through all open connections and send
     // some data without closing the connection (res.write)
     for (let res of connections) {
@@ -362,7 +363,10 @@ const sendMessage = async (req, res) => {
     }
 
     try {
-
+        let message = req.body;
+        message.timestamp = Date.now();
+        broadcast('new-message', message);
+        res.send('ok');
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });
