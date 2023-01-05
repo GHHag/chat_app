@@ -23,18 +23,18 @@
         "/chat/create": {
             "post": true
         },
-        "/chat/invite/": {
+        "/chat/invite": {
             "post": true,
             "get": true
         },
-        "/chat/invites/:id": {
+        "/chat/invites": {
             "get": true
         },
-        "/chat/accept-invite": {
-            "post": true
+        "/chat/accept-invite/:id": {
+            "put": true
         },
-        "/chat/ban/:id": {
-            "post": true
+        "/chat/ban": {
+            "put": true
         },
         "/chat/message": {
             "post": true

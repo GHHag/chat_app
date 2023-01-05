@@ -13,10 +13,10 @@ router.post('/user/block', controller.blockUser);
 router.get('/chats', controller.getChats);
 
 router.post('/chat/create', controller.createChat);
-router.post('/chat/invite/', controller.inviteToChat);
+router.post('/chat/invite', controller.inviteToChat);
 router.get('/chat/invites', controller.getChatInvites);
-router.post('/chat/accept-invite', controller.acceptChatInvite);
-router.post('/chat/ban/:id', controller.banFromChat);
+router.put('/chat/accept-invite/:id', controller.acceptChatInvite);
+router.put('/chat/ban', controller.banFromChat);
 router.post('/chat/message', controller.sendMessage);
 router.get('/chat/messages/:id', controller.getChatMessages);
 router.delete('/chat/delete-message/:id', controller.deleteMessage);

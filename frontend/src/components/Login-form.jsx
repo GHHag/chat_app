@@ -6,9 +6,30 @@ const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const submitForm = (event) => {
+  const submitForm = async (event) => {
     event.preventDefault();
-    console.log({ username, password, passwordCheck });
+    await fetch(
+      `api/user/login`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+          {
+            username: username,
+            password: password,
+          }
+        )
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('user session data??', data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }
 
   return (

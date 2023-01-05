@@ -11,7 +11,15 @@ const Header = () => {
           <Link to='/'><div>Home</div></Link>
         </Col>
         <Col>
-          <Link to='/login'><div>Login</div></Link>
+          <Link to='/login'><div>Log in</div></Link>
+        </Col>
+        <Col>
+          <Link to='/'>
+            <div onClick={() => fetch(`api/user/logout`, { method: 'DELETE' })}>Log out</div>
+          </Link>
+        </Col>
+        <Col>
+          <Link to='/chat'><div>Chats</div></Link>
         </Col>
       </Row>
     </>
