@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import postFormData from '../../fetch-utils';
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -8,28 +9,7 @@ const LoginForm = () => {
 
   const submitForm = async (event) => {
     event.preventDefault();
-    await fetch(
-      `api/user/login`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-          {
-            username: username,
-            password: password,
-          }
-        )
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('user session data??', data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    postFormData('api/user/login', { username: username, password: password });
   }
 
   return (

@@ -11,18 +11,18 @@ function App() {
 console.log(userContext);
 
 useEffect(() => {
-  const getUser = async () => {
-    const response = await fetch(`/api/user/login`, { method: 'GET' });
-    //const response = await fetch(`http://localhost:3000/api/user/login`, { method: 'GET' });
-    const responseJson = await response.json();
-    console.log(responseJson);
-    userContext = responseJson;
-  }
+const getUser = async () => {
+  const response = await fetch(`/api/user/login`, { method: 'GET' });
+  //const response = await fetch(`http://localhost:3000/api/user/login`, { method: 'GET' });
+  const responseJson = await response.json();
+  console.log(responseJson);
+  userContext = responseJson;
+}
 
-  getUser();
+getUser();
 }, []); */
 
-  const startSSE = () => {
+  /* const startSSE = () => {
     let sse = new EventSource('/api/sse');
 
     sse.addEventListener('connect', message => {
@@ -43,7 +43,7 @@ useEffect(() => {
 
   useEffect(() => {
     startSSE()
-  }, []);
+  }, []); */
 
   return (
     <main>

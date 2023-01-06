@@ -34,7 +34,7 @@ const Chat = () => {
           {
             chats && chats.map((chat, id) => (
               <Row key={id}>
-                <Button key={id} onClick={() => { setSelectedChat(chat); console.log('Show messages for chat: ', chat) }}>
+                <Button key={id} onClick={() => { setSelectedChat(chat); }}>
                   {chat.chat_subject}
                 </Button>
               </Row>

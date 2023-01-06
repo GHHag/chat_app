@@ -11,7 +11,7 @@ const RegisterForm = () => {
   const submitForm = async (event) => {
     event.preventDefault();
     console.log({ username, password, passwordCheck });
-    await fetch(
+    /* await fetch(
       `api/user/register`,
       {
         method: 'POST',
@@ -33,8 +33,13 @@ const RegisterForm = () => {
       })
       .catch((err) => {
         console.log(err.message);
-      });
+      }); */
+    postFormData(
+      'api/user/register',
+      { username: username, password: password, userRole: 'user' }
+    );
   }
+
   return (
     <>
       <div className='form-wrapper'>

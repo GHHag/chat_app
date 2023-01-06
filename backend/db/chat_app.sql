@@ -113,4 +113,4 @@ CREATE TRIGGER t_create_chat
 ---------------------------------------------------------------------
 
 -- TRIGGER som checkar att user som försöker banna från en chat e admin
--- eller skapare av chatten 
+-- eller skapare av chatten?

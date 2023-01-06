@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import postFormData from '../../fetch-utils';
 
 const ChatWindow = ({ chatData }) => {
   const [message, setMessage] = useState("");
-  //const [messageHistory, setMessageHistory] = useState([]);
+  const [messages, setMessages] = useState([]);
 
   //console.log('messageHistory: ', messageHistory);
   //console.log('ChatWindow chatData: ', chatData);
 
-  /*   useEffect(() => {
-      }
-    }, []); */
-
-  /* const startSSE = () => {
+  const startSSE = () => {
     let sse = new EventSource('/api/sse');
 
     sse.addEventListener('connect', message => {
@@ -31,14 +28,14 @@ const ChatWindow = ({ chatData }) => {
     sse.addEventListener('new-message', message => {
       let data = JSON.parse(message.data);
       console.log('[new-message]', data);
-      //setMessageHistory(messageHistory.push(message));
-      postFormData('/api/chat/message', { message: message });
-    })
+      setMessages([...messages, data]);
+      //postFormData('api/chat/message', { message: message });
+    });
   }
 
   useEffect(() => {
     startSSE()
-  }, []); */
+  }, []);
 
   const getChatMessages = async (chatId) => {
     //console.log(chatId);
@@ -51,9 +48,10 @@ const ChatWindow = ({ chatData }) => {
 
   const submitMessageForm = async (event) => {
     event.preventDefault();
-    console.log('ChatWindow - submitMessageForm - message: ', message);
-    //setMessageHistory(messageHistory.push(message));
-    await postFormData('/api/chat/message', { message: message });
+    //console.log('ChatWindow - submitMessageForm - message: ', message);
+    //setMessages([...messages, message]);
+    await postFormData('api/chat/message', { message: message });
+    //console.log(event);
   }
 
   return (
@@ -62,9 +60,9 @@ const ChatWindow = ({ chatData }) => {
         <div>DUNDERCHATT</div>
         <Card>
           {
-            /* messageHistory && messageHistory.map((message, id) => (
-              <Row key={id}><div>{message}</div></Row>
-            )) */
+            messages && messages.map((message, id) => (
+              <Row key={id}><div>{message.message}</div></Row>
+            ))
           }
         </Card>
         <Form onSubmit={submitMessageForm} autoComplete='on'>
