@@ -11,12 +11,10 @@ const postFormData = async (route, body) => {
             body: JSON.stringify(body)
         }
     )
-        .then((res) => res.json())
-        .then((data) => {
-            console.log('user session data:', data);
-        })
+        .then((res) => { console.log(res); })
+        .then((data) => { console.log('data:', data); })
         .catch((err) => {
-            console.log(err.message);
+            console.log('error orrured in postFormData(): ', err.message);
         });
 }
 

@@ -1,12 +1,29 @@
 import { useEffect, useState, useContext } from 'react';
 import './index.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, redirect, useNavigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Chat from './pages/Chat';
 import Header from './components/Header';
 
 function App() {
+  //const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const response = await fetch(`/api/user/login`, { method: 'GET' });
+      const responseJson = await response.json();
+      console.log(responseJson.user);
+      if (responseJson.user) {
+        setUser(responseJson.user);
+        //navigate("/chat");
+      }
+    }
+
+    getUser();
+  }, []);
+
   /* let userContext = useContext("");
 console.log(userContext);
 
@@ -48,7 +65,7 @@ getUser();
   return (
     <main>
       <BrowserRouter>
-        <Header />
+        <Header user={user} />
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />

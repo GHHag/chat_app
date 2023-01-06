@@ -28,7 +28,10 @@ const ChatWindow = ({ chatData }) => {
     sse.addEventListener('new-message', message => {
       let data = JSON.parse(message.data);
       console.log('[new-message]', data);
-      setMessages([...messages, data]);
+      //let messageArray = [...messages, data];
+      //setMessages(messageArray);
+      //setMessages([...messages, data]);
+      setMessages(messages => [...messages, data]);
       //postFormData('api/chat/message', { message: message });
     });
   }
@@ -61,7 +64,10 @@ const ChatWindow = ({ chatData }) => {
         <Card>
           {
             messages && messages.map((message, id) => (
-              <Row key={id}><div>{message.message}</div></Row>
+              <Card key={id}>
+                <Row ><div>{message.message}</div></Row>
+                <Row ><div>{message.timestamp}</div></Row>
+              </Card>
             ))
           }
         </Card>

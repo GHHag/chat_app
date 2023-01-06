@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import ChatWindow from '../components/Chat-window';
+import ChatWindow from '../components/ChatWindow';
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
