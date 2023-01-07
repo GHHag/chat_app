@@ -6,7 +6,7 @@ const Login = ({ setUserCallback }) => {
     return (
         <>
             <LoginForm setUserCallback={setUserCallback}></LoginForm>
-            <RegisterForm></RegisterForm>
+            <RegisterForm setUserCallback={setUserCallback}></RegisterForm>
         </>
     )
 }

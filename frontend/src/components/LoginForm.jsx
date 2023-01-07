@@ -3,7 +3,6 @@ import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import postData from '../../fetch-utils';
 
 const LoginForm = ({ setUserCallback }) => {
   const [username, setUsername] = useState("");
@@ -11,9 +10,19 @@ const LoginForm = ({ setUserCallback }) => {
 
   const submitForm = async (event) => {
     event.preventDefault();
-    const response = await postData('api/user/login', { username: username, password: password });
-    const responseJson = await response.json();
-    await setUserCallback(responseJson.user);
+    await fetch(
+      'api/user/login',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: username, password: password })
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setUserCallback(data.user))
+      .catch((err) => { console.log(err.message) });
     setUsername("");
     setPassword("");
   }

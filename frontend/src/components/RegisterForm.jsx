@@ -5,17 +5,28 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import postData from '../../fetch-utils';
 
-const RegisterForm = () => {
+const RegisterForm = ({ setUserCallback }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
 
   const submitForm = async (event) => {
     event.preventDefault();
-    postData(
+    //postData(
+    await fetch(
       'api/user/register',
-      { username: username, password: password, userRole: 'user' }
-    );
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: username, password: password, userRole: 'user' })
+      }
+      //{ username: username, password: password, userRole: 'user' }
+    )
+      .then((res) => res.json())
+      .then((data) => setUserCallback(data.user))
+      .catch((err) => console.log(err.message));
     setUsername("");
     setPassword("");
     setPasswordCheck("");

@@ -2,17 +2,27 @@ import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import postData from '../../fetch-utils';
 
-const ChatCreate = () => {
+const ChatCreate = ({ setSelectedChatCallback, setNewChatCallback }) => {
   const [chatSubject, setChatSubject] = useState("");
   const [invitedUsers, setInvitedUsers] = useState([]);
 
   const submitNewChatForm = async (event) => {
     event.preventDefault();
-    await postData('api/chat/create', { subject: chatSubject });
+    await fetch(
+      'api/chat/create',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ subject: chatSubject })
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => { setSelectedChatCallback(data.chat); setNewChatCallback(false) })
+      .catch((err) => { console.log(err.message); })
     setChatSubject("");
   }
 

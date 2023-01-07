@@ -27,7 +27,7 @@ const Chat = () => {
     }
 
     getChats();
-  }, []);
+  }, [chats]);
 
   return (
     <>
@@ -35,23 +35,25 @@ const Chat = () => {
         <Row><h1>Chats</h1></Row>
         <Card className='p-2 m-2'>
           {
-            !selectedChat &&
-            chats && chats.map((chat, id) => (
+            !selectedChat && chats.length > 0 && !newChat && chats.map((chat, id) => (
               <Button key={id} onClick={() => { setSelectedChat(chat); }} className='my-2 p-2'>
                 {chat.chat_subject}
               </Button>
             ))
+          }
+          {
+            !chats.length > 0 && <div>No chats found</div>
           }
         </Card>
         {
           selectedChat ?
             <ChatWindow chatData={selectedChat} setSelectedChatCallback={setSelectedChat}></ChatWindow>
             :
-            <Button onClick={() => setNewChat(true)}>New Chat</Button>
+            <Button onClick={() => setNewChat(true)}>New Chat 💬</Button>
         }
         {
           !selectedChat &&
-          newChat && <ChatCreate />
+          newChat && <ChatCreate setSelectedChatCallback={setSelectedChat} setNewChatCallback={setNewChat} />
         }
       </Card>
     </>

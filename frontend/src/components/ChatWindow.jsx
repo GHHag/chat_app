@@ -62,7 +62,7 @@ const ChatWindow = ({ chatData, setSelectedChatCallback }) => {
           </Col>
           <Col>
             <Button onClick={() => { fetch('api/chat/disconnect', { method: 'POST' }); setSelectedChatCallback(false); }}>
-              Close Chat
+              🚫 Close Chat
             </Button>
           </Col>
         </Row>
@@ -70,7 +70,7 @@ const ChatWindow = ({ chatData, setSelectedChatCallback }) => {
         {
           messages && messages.map((message, id) => (
             <Card key={id} className='my-2 bg-secondary'>
-              <Row className='my-1 px-2'><Col>{new Date(message.timestamp).toISOString()}</Col></Row>
+              <Row className='my-1 px-2'><Col>⏲️ {new Date(message.timestamp).toISOString()}</Col></Row>
               <Row className='my-1 px-2'><Col>{message.message}</Col></Row>
             </Card>
           ))
@@ -85,7 +85,7 @@ const ChatWindow = ({ chatData, setSelectedChatCallback }) => {
               onChange={(event) => setMessage(event.target.value)}
             />
           </Form.Group>
-          <Button type='submit'>Send</Button>
+          <Button type='submit'>Send 📨</Button>
         </Form>
       </Card>
     </>

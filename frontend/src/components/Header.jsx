@@ -1,33 +1,40 @@
-import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-const Header = ({ user }) => {
+const Header = ({ user, setUserCallback }) => {
+
   return (
     <>
-      <Row>
+      <Row className='p-2 m-2'>
         <Col>
-          <Link to='/'><div>Home</div></Link>
+          <Link to='/'><div className='header-link-div'>🏠 Home</div></Link>
         </Col>
         {
           !user &&
           <Col>
-            <Link to='/login'><div>Log in</div></Link>
+            <Link to='/login'><div className='header-link-div'>➡️ Log in</div></Link>
+          </Col>
+        }
+        {
+          user &&
+          <Col>
+            <Link to='/chat'><div className='header-link-div'>💬 Chats</div></Link>
           </Col>
         }
         {
           user &&
           <Col>
             <Link to='/'>
-              <div onClick={() => fetch(`api/user/logout`, { method: 'DELETE' })}>Log out</div>
+              <div onClick={() => { fetch(`api/user/logout`, { method: 'DELETE' }); setUserCallback(null); }} className='header-link-div'>🚫 Log out</div>
             </Link>
           </Col>
         }
         {
           user &&
           <Col>
-            <Link to='/chat'><div>Chats</div></Link>
+            <div className='header-link-div'>☑️ Logged in as: <strong className='font-weight-bold'>{user.username}</strong></div>
           </Col>
         }
       </Row>
