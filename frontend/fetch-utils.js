@@ -1,6 +1,5 @@
 // gör dynamisk för att kunna anv query params?
-const postFormData = async (route, body) => {
-    console.log('fetchUtils.js - postFormData() - route: ', route, ' - body: ', body);
+const postData = async (route, body) => {
     await fetch(
         route,
         {
@@ -11,11 +10,11 @@ const postFormData = async (route, body) => {
             body: JSON.stringify(body)
         }
     )
-        .then((res) => { console.log(res); })
-        .then((data) => { console.log('data:', data); })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
         .catch((err) => {
-            console.log('error orrured in postFormData(): ', err.message);
+            console.log('error orrured in postData(): ', err.message);
         });
 }
 
-export default postFormData;
+export default postData;

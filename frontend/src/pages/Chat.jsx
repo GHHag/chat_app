@@ -4,15 +4,18 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import ChatWindow from '../components/ChatWindow';
+import ChatCreate from '../components/ChatCreate';
+
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [newChat, setNewChat] = useState(false);
 
   useEffect(() => {
     const getChats = async () => {
       await fetch(
-        `/api/chats`,
+        `api/chats`,
         {
           method: 'GET'
         }
@@ -28,27 +31,29 @@ const Chat = () => {
 
   return (
     <>
-      <main>
-        <h1>Chats</h1>
-        <Card>
+      <Card className='p-2 m-2'>
+        <Row><h1>Chats</h1></Row>
+        <Card className='p-2 m-2'>
           {
+            !selectedChat &&
             chats && chats.map((chat, id) => (
-              <Row key={id}>
-                <Button key={id} onClick={() => { setSelectedChat(chat); }}>
-                  {chat.chat_subject}
-                </Button>
-              </Row>
+              <Button key={id} onClick={() => { setSelectedChat(chat); }} className='my-2 p-2'>
+                {chat.chat_subject}
+              </Button>
             ))
           }
         </Card>
         {
-          selectedChat &&
-          <Card>
-            <h3>{selectedChat.chat_subject}</h3>
-            <ChatWindow chatData={selectedChat}></ChatWindow>
-          </Card>
+          selectedChat ?
+            <ChatWindow chatData={selectedChat} setSelectedChatCallback={setSelectedChat}></ChatWindow>
+            :
+            <Button onClick={() => setNewChat(true)}>New Chat</Button>
         }
-      </main>
+        {
+          !selectedChat &&
+          newChat && <ChatCreate />
+        }
+      </Card>
     </>
   )
 }

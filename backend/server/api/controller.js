@@ -132,8 +132,6 @@ const loginUser = async (req, res) => {
 }
 
 const getLoggedInUser = async (req, res) => {
-    console.log(req.session.user);
-    console.log(req.route.path);
     if (!acl(req.route.path, req)) {
         res.status(405).json({ error: 'Not allowed' });
         return;
@@ -352,7 +350,7 @@ const banFromChat = async (req, res) => {
 
 
 const sendMessage = async (req, res) => {
-    if (!req) {
+    if (!req.body) {
         res.status(500).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
@@ -411,6 +409,28 @@ const deleteMessage = async (req, res) => {
     }
 }
 
+const disconnectFromChat = async (req, res) => {
+    /* if (!req.body) {
+        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        return;
+    } */
+
+    if (!acl(req.route.path, req)) {
+        res.status(405).json({ error: 'Not allowed' });
+        return;
+    }
+
+    try {
+        let message = { event: "User disconnected" };
+        message.timestamp = Date.now();
+        broadcast('disconnect', message);
+        res.send('ok');
+    }
+    catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
+
 /* const x = async (req, res) => {
     if (!req) {
         res.status(500).json({ success: false, error: 'Incorrect parameters' });
@@ -444,5 +464,6 @@ module.exports = {
     banFromChat,
     sendMessage,
     getChatMessages,
-    deleteMessage
+    deleteMessage,
+    disconnectFromChat
 }

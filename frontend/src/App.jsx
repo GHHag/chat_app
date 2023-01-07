@@ -9,6 +9,7 @@ import Header from './components/Header';
 function App() {
   //const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  console.log('App, user: ', user);
 
   useEffect(() => {
     const getUser = async () => {
@@ -68,7 +69,7 @@ getUser();
         <Header user={user} />
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<Login setUserCallback={setUser} />} />
           <Route path='/chat' element={<Chat />} />
         </Routes >
       </BrowserRouter >

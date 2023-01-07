@@ -2,10 +2,10 @@ import React from 'react';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 
-const Login = () => {
+const Login = ({ setUserCallback }) => {
     return (
         <>
-            <LoginForm></LoginForm>
+            <LoginForm setUserCallback={setUserCallback}></LoginForm>
             <RegisterForm></RegisterForm>
         </>
     )

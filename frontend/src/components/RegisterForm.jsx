@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import postFormData from '../../fetch-utils';
+import postData from '../../fetch-utils';
 
 const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -10,69 +12,49 @@ const RegisterForm = () => {
 
   const submitForm = async (event) => {
     event.preventDefault();
-    console.log({ username, password, passwordCheck });
-    /* await fetch(
-      `api/user/register`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-          {
-            username: username,
-            password: password,
-            userRole: 'user'
-          }
-        )
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('user session data:', data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      }); */
-    postFormData(
+    postData(
       'api/user/register',
       { username: username, password: password, userRole: 'user' }
     );
+    setUsername("");
+    setPassword("");
+    setPasswordCheck("");
   }
 
   return (
     <>
-      <div className='form-wrapper'>
-        <h2>Register User</h2>
+      <Card className='p-2 m-2'>
+        <Row><h2>Register User</h2></Row>
         <Form onSubmit={submitForm} autoComplete='on'>
           <Form.Group>
             <Form.Control
+              className='my-2'
               type='text'
               name='username'
               value={username}
-              placeholder='Username'
+              placeholder='Username...'
               onChange={(event) => setUsername(event.target.value)}
             />
             <Form.Control
+              className='my-2'
               type='text'
               name='password'
               value={password}
-              placeholder='Password'
+              placeholder='Password...'
               onChange={(event) => setPassword(event.target.value)}
             />
             <Form.Control
+              className='my-2'
               type='text'
               name='passwordCheck'
               value={passwordCheck}
-              placeholder='Confirm Password'
+              placeholder='Confirm Password...'
               onChange={(event) => setPasswordCheck(event.target.value)}
             />
           </Form.Group>
-          <Button type='submit' onClick={submitForm}>
-            Register
-          </Button>
+          <Button type='submit' className='my-2'>Register</Button>
         </Form>
-      </div>
+      </Card>
     </>
   );
 }
