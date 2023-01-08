@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button';
 
 const ChatCreate = ({ setSelectedChatCallback, setNewChatCallback }) => {
   const [chatSubject, setChatSubject] = useState("");
-  const [invitedUsers, setInvitedUsers] = useState([]);
 
   const submitNewChatForm = async (event) => {
     event.preventDefault();

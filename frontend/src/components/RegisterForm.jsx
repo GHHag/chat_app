@@ -12,7 +12,6 @@ const RegisterForm = ({ setUserCallback }) => {
 
   const submitForm = async (event) => {
     event.preventDefault();
-    //postData(
     await fetch(
       'api/user/register',
       {
@@ -22,7 +21,6 @@ const RegisterForm = ({ setUserCallback }) => {
         },
         body: JSON.stringify({ username: username, password: password, userRole: 'user' })
       }
-      //{ username: username, password: password, userRole: 'user' }
     )
       .then((res) => res.json())
       .then((data) => setUserCallback(data.user))

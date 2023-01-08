@@ -9,6 +9,7 @@ router.post('/user/login', controller.loginUser);
 router.get('/user/login', controller.getLoggedInUser);
 router.delete('/user/logout', controller.logoutUser);
 router.post('/user/block', controller.blockUser);
+router.get('/user', controller.getUsers);
 
 router.get('/chats', controller.getChats);
 

@@ -56,8 +56,11 @@ CREATE TABLE IF NOT EXISTS public.messages
 (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     chat_id uuid NOT NULL,
+    from_id uuid NOT NULL,
+    content VARCHAR(1000) NOT NULL,
     message_timestamp TIMESTAMP NOT NULL,
     CONSTRAINT chat_id_fk FOREIGN KEY(chat_id) REFERENCES chats(id)
+    CONSTRAINT from_id_fk FOREIGN KEY(from_id) REFERENCES users(id)
 );
 
 ALTER TABLE IF EXISTS public.messages

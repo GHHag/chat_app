@@ -28,7 +28,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login setUserCallback={setUser} />} />
-          <Route path='/chat' element={<Chat />} />
+          <Route path='/chat' element={<Chat userData={user} />} />
         </Routes >
       </BrowserRouter >
     </main >
