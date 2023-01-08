@@ -1,3 +1,21 @@
 .header-link-div {
     font-size: 20px
 }
+
+.messageOther {
+    display: block;
+    margin-right: auto;
+    background: rgb(194, 191, 196) !important;
+    padding: 15px;
+    border-radius: 15px;
+    max-width: fit-content;
+}
+
+.messageMine {
+    display: block;
+    margin-left: auto;
+    background: rgb(95, 145, 255) !important;
+    padding: 15px;
+    border-radius: 15px;
+    max-width: fit-content;
+}

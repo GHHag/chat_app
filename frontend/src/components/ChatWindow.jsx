@@ -5,7 +5,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import postData from '../../fetch-utils';
 
 const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   const [message, setMessage] = useState("");
@@ -29,7 +28,6 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     sse.addEventListener('new-message', message => {
       let data = JSON.parse(message.data);
       console.log('[new-message]', data);
-      console.log(data);
       setMessages(messages => [...messages, data]);
       //setMessages([...messages, data]);
     });
@@ -58,7 +56,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ content: message, fromId: userData.id })
+        body: JSON.stringify({ content: message, from: userData.username, fromId: userData.id })
       }
     )
       .catch((err) => {
@@ -112,10 +110,16 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
         <div className='my-2'>Messages</div>
         {
           messages && messages.map((message, id) => (
-            <Card key={id} className='my-2 bg-secondary' style={message.fromId === userData.id ? { justifyContent: 'right' } : { justifyContent: 'left' }}>
-              <Col>{userData.username} @ ⏲ {new Date(message.timestamp).toISOString()}:</Col>
-              <Col>{message.content}</Col>
-            </Card>
+            <Col key={id}>
+              <Card
+                //className={message.fromId === userData.id ? 'my-2 bg-light' : 'my-2 bg-secondary'}
+                className={message.fromId === userData.id ? 'messageMine my-1 px-1' : 'messageOther my-1 px-1'}
+              //</Col>style = { message.fromId === userData.id ? { justifyContent: 'right' } : { justifyContent: 'left' } } 
+              >
+                <Col>{message.from} @ ⏲ {new Date(message.timestamp).toISOString().slice(0, 16).split("T").join(" ")}</Col>
+                <Col>{message.content}</Col>
+              </Card>
+            </Col>
           ))
         }
         <Form onSubmit={submitMessageForm} autoComplete='on'>
@@ -130,9 +134,9 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
           </Form.Group>
           <Button type='submit'>Send 📨</Button>
         </Form>
-      </Card>
+      </Card >
       {
-        <Modal show={enableChatInviting} backdrop='static' centered>
+        < Modal show={enableChatInviting} backdrop='static' centered >
           <Modal.Header className='text-center'><h2>Invite users</h2></Modal.Header>
           <Modal.Body>
             <Form onSubmit={submitChatInvite}>
@@ -176,7 +180,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
           <Modal.Footer>
             <Button onClick={() => setEnableChatInviting(false)}>🚫 Close</Button>
           </Modal.Footer>
-        </Modal>
+        </Modal >
       }
     </>
   )
