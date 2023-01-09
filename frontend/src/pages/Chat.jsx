@@ -9,7 +9,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import ChatWindow from '../components/ChatWindow';
 import ChatCreate from '../components/ChatCreate';
 
-
 const Chat = ({ userData }) => {
   const [chats, setChats] = useState([]);
   const [chatInvitations, setChatInvitations] = useState([]);
@@ -64,7 +63,7 @@ const Chat = ({ userData }) => {
               onClick={() => setShowChatInvitations(true)}
               disabled={!chatInvitations.length > 0 ? true : false}
             >
-              Pending invites ({chatInvitations.length})
+              {!chatInvitations.length > 0 ? 'Pending invites' : `🔔 Pending invites (${chatInvitations.length})`}
             </Button>
           </Col>
         </Row>

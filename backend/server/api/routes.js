@@ -15,6 +15,7 @@ router.get('/chats', controller.getChats);
 
 router.post('/chat/create', controller.createChat);
 router.post('/chat/invite', controller.inviteToChat);
+router.get('/chat/users', controller.getChatUsers);
 router.get('/chat/invites', controller.getChatInvites);
 router.put('/chat/accept-invite/:id', controller.acceptChatInvite);
 router.put('/chat/ban', controller.banFromChat);

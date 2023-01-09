@@ -2,17 +2,25 @@ const db = require('./db');
 const passwordEncryptor = require('../../security/passwordEncryptor');
 const acl = require('../../security/acl');
 
-let connections = [];
+//let connections = [];
+let connections = {};
 
 const sse = async (req, res) => {
     // Add the response to open connections
-    connections.push(res);
+    //connections.push(res);
+    if (!connections[req.query.chatId]) {
+        connections[req.query.chatId] = [res];
+    }
+    else {
+        connections[req.query.chatId].push(res);
+    }
 
     // listen for client disconnection
     // and remove the client's response
     // from the open connections list
     req.on('close', () => {
-        connections = connections.filter(openRes => openRes != res)
+        //connections = connections.filter(openRes => openRes != res)
+        connections[req.query.chatId] = connections[req.query.chatId].filter(openRes => openRes != res)
 
         // message all open connections that a client disconnected
         broadcast('disconnect', {
@@ -30,7 +38,9 @@ const sse = async (req, res) => {
     // message all connected clients that this 
     // client connected
     broadcast('connect', {
-        message: 'clients connected: ' + connections.length
+        //message: 'clients connected: ' + connections.length
+        message: 'clients connected: ' + connections[req.query.chatId].length,
+        chatId: req.query.chatId
     });
 }
 
@@ -39,7 +49,8 @@ function broadcast(event, data) {
     console.log('broadcast event,', data);
     // loop through all open connections and send
     // some data without closing the connection (res.write)
-    for (let res of connections) {
+    //for (let res of connections) {
+    for (let res of connections[data.chatId]) {
         // syntax for a SSE message: 'event: message \ndata: "the-message" \n\n'
         res.write('event:' + event + '\ndata:' + JSON.stringify(data) + '\n\n');
     }
@@ -279,9 +290,19 @@ const inviteToChat = async (req, res) => {
 
     try {
         await db.query(
-            `
+            /* `
                 INSERT INTO chat_users (chat_id, user_id)
                 VALUES ($1, $2)
+            `, */
+            `
+                INSERT INTO chat_users (chat_id, user_id)
+                SELECT $1, $2
+                WHERE NOT EXISTS(
+                    SELECT *
+                    FROM chat_users
+                    WHERE chat_id = $1
+                    AND user_id = $2
+                )
             `,
             [req.query.chatId, req.query.userId]
         );
@@ -293,7 +314,39 @@ const inviteToChat = async (req, res) => {
     }
 }
 
+const getChatUsers = async (req, res) => {
+    if (!req.query.chatId) {
+        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        return;
+    }
+
+    if (!acl(req.route.path, req)) {
+        res.status(405).json({ error: 'Not allowed' });
+        return;
+    }
+
+    try {
+        const query = await db.query(
+            `
+                SELECT users.id, users.username 
+                FROM users, chats, chat_users
+                WHERE users.id = chat_users.user_id
+                AND chats.id = chat_users.chat_id
+                AND chats.id = $1
+                AND users.id != $2
+            `,
+            [req.query.chatId, req.session.user.id]
+        );
+
+        res.status(200).json({ success: true, result: query.rows });
+    }
+    catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
+
 const getChatInvites = async (req, res) => {
+    // QUERY -- add statement to make sure an already invited user cant be invited again
     if (!acl(req.route.path, req)) {
         res.status(405).json({ error: 'Not allowed' });
         return;
@@ -488,6 +541,7 @@ module.exports = {
     getChats,
     createChat,
     inviteToChat,
+    getChatUsers,
     getChatInvites,
     acceptChatInvite,
     banFromChat,

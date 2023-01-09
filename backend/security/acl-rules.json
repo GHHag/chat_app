@@ -30,6 +30,9 @@
             "post": true,
             "get": true
         },
+        "/chat/users": {
+            "get": true
+        },
         "/chat/invites": {
             "get": true
         },
