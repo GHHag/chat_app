@@ -1,14 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import postData from '../../fetch-utils';
 
 const RegisterForm = ({ setUserCallback }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordCheck, setPasswordCheck] = useState("");
+  const [passwordValid, setPasswordValid] = useState(false);
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [passwordConfirmed, setPasswordConfirmed] = useState(false);
+
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+    validatePassword(e);
+  }
+
+  const validatePassword = (e) => {
+    //const validPassword = /^(?=.*[!@#$%^&*"])(?=.*\d)(?=.*[A-Z])[a-zA-Z0-9]{8,}/
+    const validPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/;
+    console.log(e.target.value);
+    console.log(e.target.value.match(validPassword));
+    if (e.target?.value && e.target.value.match(validPassword)) {
+      setPasswordValid(true);
+      setPassword(e.target.value);
+    }
+    else {
+      setPasswordValid(false);
+      setPassword(e.target.value);
+    }
+  }
+
+  const handlePasswordConfirmed = (e) => {
+    setPasswordConfirm(e.target.value);
+    validatePasswordConfirmed(e);
+  }
+
+  const validatePasswordConfirmed = (e) => {
+    if (password === e.target.value) {
+      setPasswordConfirmed(true);
+    }
+    else {
+      setPasswordConfirmed(false);
+    }
+  }
 
   const submitForm = async (event) => {
     event.preventDefault();
@@ -27,7 +62,7 @@ const RegisterForm = ({ setUserCallback }) => {
       .catch((err) => console.log(err.message));
     setUsername("");
     setPassword("");
-    setPasswordCheck("");
+    setPasswordConfirm("");
   }
 
   return (
@@ -46,22 +81,26 @@ const RegisterForm = ({ setUserCallback }) => {
             />
             <Form.Control
               className='my-2'
-              type='text'
+              type='password'
               name='password'
               value={password}
               placeholder='Password...'
-              onChange={(event) => setPassword(event.target.value)}
+              style={!passwordValid && password.length > 0 ? { 'borderColor': 'red', 'borderWidth': '3px' } : { 'borderColor': 'lightGrey' }}
+              //onChange={(event) => setPassword(event.target.value)}
+              onChange={(e) => handlePassword(e)}
             />
             <Form.Control
               className='my-2'
-              type='text'
+              type='password'
               name='passwordCheck'
-              value={passwordCheck}
+              value={passwordConfirm}
               placeholder='Confirm Password...'
-              onChange={(event) => setPasswordCheck(event.target.value)}
+              //onChange={(event) => setPasswordConfirm(event.target.value)}
+              style={!passwordConfirmed && passwordConfirm.length > 0 ? { 'borderColor': 'red', 'borderWidth': '3px' } : { 'borderColor': 'lightGrey' }}
+              onChange={(event) => handlePasswordConfirmed(event)}
             />
           </Form.Group>
-          <Button type='submit' className='my-2'>Register</Button>
+          <Button type='submit' disabled={!passwordValid && passwordConfirmed ? true : false} className='my-2'>Register</Button>
         </Form>
       </Card>
     </>

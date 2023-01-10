@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 
 const LoginForm = ({ setUserCallback }) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,6 +27,7 @@ const LoginForm = ({ setUserCallback }) => {
       .catch((err) => { console.log(err.message) });
     setUsername("");
     setPassword("");
+    navigate('/chat');
   }
 
   return (
@@ -43,7 +46,7 @@ const LoginForm = ({ setUserCallback }) => {
             />
             <Form.Control
               className='my-2'
-              type='text'
+              type='password'
               name='password'
               value={password}
               placeholder='Password...'

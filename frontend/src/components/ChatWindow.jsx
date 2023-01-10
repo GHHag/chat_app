@@ -31,16 +31,16 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     sse.addEventListener('new-message', message => {
       let data = JSON.parse(message.data);
       data.chatData = chatData;
-      console.log('[new-message]', data);
-      //let x = messages;
-      //x.push(data);
-      //setMessages(x);
-      setMessages(messages => [...messages, data]);
+      console.log('[new message]', data);
+      setMessages([...messages, data])
+      //setMessages(messages.concat([data]));
+      //setMessages(messages => [...messages, data]);
     });
   }
 
   useEffect(() => {
     startSSE()
+    //}, [messages]);
   }, []);
 
   const getChatMessages = async (chatId) => {
@@ -70,10 +70,10 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
         })
       }
     )
+      .then(setMessage(""))
       .catch((err) => {
         console.log(err.message);
       });
-    setMessage("");
   }
 
   const submitChatInvite = async (event) => {
@@ -105,7 +105,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
               <Button onClick={async () => {
                 setEnableChatInviting(true);
                 await fetch(
-                  'api/user',
+                  `api/chat/invite?chatId=${chatData.chat_id}`,
                   {
                     method: 'GET'
                   }
@@ -132,14 +132,14 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                   .catch((err) => console.log(err.message))
               }}
               >
-                Moderate chat
+                🛡️ Moderate chat
               </Button>
             </Col>
           </Row>
         }
         <div className='my-2'>Messages</div>
         {
-          messages && messages.map((message, id) => (
+          messages.length > 0 && messages.map((message, id) => (
             <Col key={id}>
               <Card
                 className={message.fromId === userData.id ? 'messageMine my-1 px-1' : 'messageOther my-1 px-1'}
@@ -228,24 +228,26 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                 <Row className='text-center align-items-center m-2' key={id}>
                   <Col>{user.username}</Col>
                   <Col>
-                    <Button variant='warning' onClick={async (e) => {
-                      /* await fetch(
-                        `api/chat/invite?chatId=${chatData.chat_id}&userId=${user.id}`,
-                        {
-                          method: 'POST',
-                          header: {
-                            'Content-Type': 'application/json'
+                    <Button
+                      variant={!user.banned ? 'warning' : 'primary'}
+                      onClick={async (e) => {
+                        await fetch(
+                          `api/chat/ban?chatId=${chatData.chat_id}&userId=${user.id}`,
+                          {
+                            method: 'PUT',
+                            header: {
+                              'Content-Type': 'application/json'
+                            }
                           }
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((data) => console.log(data))
-                        .catch((err) => console.log(err.message));
-                      e.target.disabled = true;
-                      e.target.textContent = '✔️'
-                      e.target.style.backgroundColor = 'green'; */
-                    }}>
-                      🚫
+                        )
+                          .then((res) => res.json())
+                          .then((data) => console.log(data))
+                          .catch((err) => console.log(err.message));
+                        e.target.disabled = true;
+                        e.target.textContent = '✔️'
+                        e.target.style.backgroundColor = 'green';
+                      }}>
+                      {!user.banned ? '🏴 Ban' : '🏳️ Unban'}
                     </Button>
                   </Col>
                 </Row>

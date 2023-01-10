@@ -14,6 +14,7 @@ router.get('/user', controller.getUsers);
 router.get('/chats', controller.getChats);
 
 router.post('/chat/create', controller.createChat);
+router.get('/chat/invite', controller.getInvitationEligbleUsers);
 router.post('/chat/invite', controller.inviteToChat);
 router.get('/chat/users', controller.getChatUsers);
 router.get('/chat/invites', controller.getChatInvites);

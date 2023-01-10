@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -10,6 +11,7 @@ import ChatWindow from '../components/ChatWindow';
 import ChatCreate from '../components/ChatCreate';
 
 const Chat = ({ userData }) => {
+  const navigate = useNavigate();
   const [chats, setChats] = useState([]);
   const [chatInvitations, setChatInvitations] = useState([]);
   const [showChatInvitations, setShowChatInvitations] = useState(false);
@@ -17,6 +19,10 @@ const Chat = ({ userData }) => {
   const [newChat, setNewChat] = useState(false);
 
   useEffect(() => {
+    if (!userData) {
+      navigate('/');
+    }
+
     const getChats = async () => {
       await fetch(
         `api/chats`,
@@ -70,7 +76,13 @@ const Chat = ({ userData }) => {
         <Card className='p-2 m-2'>
           {
             !selectedChat && chats.length > 0 && !newChat && chats.map((chat, id) => (
-              <Button key={id} onClick={() => { setSelectedChat(chat); }} className='my-2 p-2'>
+              <Button
+                key={id}
+                disabled={chat.banned}
+                variant={chat.banned ? 'danger' : 'primary'}
+                className='my-2 p-2'
+                onClick={() => { setSelectedChat(chat); }}
+              >
                 <Row>
                   <Col>{chat.chat_subject}</Col>
                   <Col>
@@ -83,6 +95,7 @@ const Chat = ({ userData }) => {
                         <div>👑</div>
                       </OverlayTrigger>
                     }
+                    {chat.banned && 'You have been banned from this chat'}
                   </Col>
                 </Row>
               </Button>
@@ -127,7 +140,7 @@ const Chat = ({ userData }) => {
                           .then((data) => console.log(data))
                           .catch((err) => console.log(err.message));
                         e.target.disabled = true;
-                        e.target.textContent = '✅'
+                        e.target.textContent = '✔️'
                         e.target.style.backgroundColor = 'green';
                       }}
                     >
