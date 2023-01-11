@@ -17,8 +17,7 @@ const RegisterForm = ({ setUserCallback }) => {
   }
 
   const validatePassword = (e) => {
-    //const validPassword = /^(?=.*[!@#$%^&*"])(?=.*\d)(?=.*[A-Z])[a-zA-Z0-9]{8,}/
-    const validPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/;
+    const validPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/;
     console.log(e.target.value);
     console.log(e.target.value.match(validPassword));
     if (e.target?.value && e.target.value.match(validPassword)) {
@@ -86,21 +85,20 @@ const RegisterForm = ({ setUserCallback }) => {
               value={password}
               placeholder='Password...'
               style={!passwordValid && password.length > 0 ? { 'borderColor': 'red', 'borderWidth': '3px' } : { 'borderColor': 'lightGrey' }}
-              //onChange={(event) => setPassword(event.target.value)}
-              onChange={(e) => handlePassword(e)}
+              onChange={(event) => handlePassword(event)}
             />
             <Form.Control
               className='my-2'
               type='password'
               name='passwordCheck'
+              autoComplete=''
               value={passwordConfirm}
               placeholder='Confirm Password...'
-              //onChange={(event) => setPasswordConfirm(event.target.value)}
               style={!passwordConfirmed && passwordConfirm.length > 0 ? { 'borderColor': 'red', 'borderWidth': '3px' } : { 'borderColor': 'lightGrey' }}
               onChange={(event) => handlePasswordConfirmed(event)}
             />
           </Form.Group>
-          <Button type='submit' disabled={!passwordValid && passwordConfirmed ? true : false} className='my-2'>Register</Button>
+          <Button type='submit' disabled={!passwordValid || !passwordConfirmed ? true : false} className='my-2'>Register</Button>
         </Form>
       </Card>
     </>

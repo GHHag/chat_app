@@ -20,6 +20,9 @@
         "/user": {
             "get": true
         },
+        "/user/search": {
+            "get": true
+        },
         "/chats": {
             "get": true
         },

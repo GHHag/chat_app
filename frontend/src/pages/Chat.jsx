@@ -4,11 +4,14 @@ import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Badge from 'react-bootstrap/Badge';
 import Modal from 'react-bootstrap/Modal';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import ChatWindow from '../components/ChatWindow';
 import ChatCreate from '../components/ChatCreate';
+import UserList from '../components/UserList';
 
 const Chat = ({ userData }) => {
   const navigate = useNavigate();
@@ -16,6 +19,7 @@ const Chat = ({ userData }) => {
   const [chatInvitations, setChatInvitations] = useState([]);
   const [showChatInvitations, setShowChatInvitations] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [showUsers, setShowUsers] = useState(false);
   const [newChat, setNewChat] = useState(false);
 
   useEffect(() => {
@@ -31,9 +35,7 @@ const Chat = ({ userData }) => {
         }
       )
         .then((res) => res.json())
-        .then((data) => {
-          setChats(data.result);
-        })
+        .then((data) => setChats(data.result))
         .catch((err) => console.log(err.message));
     }
 
@@ -45,9 +47,7 @@ const Chat = ({ userData }) => {
         }
       )
         .then((res) => res.json())
-        .then((data) => {
-          setChatInvitations(data.result);
-        })
+        .then((data) => setChatInvitations(data.result))
         .catch((err) => console.log(err.message));
     }
 
@@ -61,6 +61,10 @@ const Chat = ({ userData }) => {
 
   return (
     <>
+      <p onClick={() => setShowUsers(!showUsers)} className='p-2 m-2'>
+        {!showUsers ? 'Show users' : 'Hide users'}
+      </p>
+      {showUsers && <UserList />}
       <Card className='p-2 m-2 text-center'>
         <Row className='align-items-center'>
           <Col><h1>Chats</h1></Col>
@@ -73,43 +77,39 @@ const Chat = ({ userData }) => {
             </Button>
           </Col>
         </Row>
-        <Card className='p-2 m-2'>
+        <ListGroup className='p-2 m-2 chatListGroup'>
           {
             !selectedChat && chats.length > 0 && !newChat && chats.map((chat, id) => (
-              <Button
-                key={id}
-                disabled={chat.banned}
-                variant={chat.banned ? 'danger' : 'primary'}
-                className='my-2 p-2'
-                onClick={() => { setSelectedChat(chat); }}
-              >
-                <Row>
-                  <Col>{chat.chat_subject}</Col>
-                  <Col>
-                    {
-                      chat.created_by === userData.id &&
-                      <OverlayTrigger
-                        delay={{ show: 250, hide: 400 }}
-                        overlay={renderTooltip}
-                      >
-                        <div>👑</div>
-                      </OverlayTrigger>
-                    }
-                    {chat.banned && 'You have been banned from this chat'}
-                  </Col>
-                </Row>
-              </Button>
+              <Row key={id}>
+                <ListGroup.Item
+                  disabled={chat.banned}
+                  onClick={() => setSelectedChat(chat)}
+                  className='chatListGroupItem'
+                >
+                  {chat.chat_subject}
+                  {chat.banned && <Badge pill bg='danger' className='ms-4'>Banned</Badge>}
+                  {
+                    chat.created_by === userData.id &&
+                    <OverlayTrigger
+                      delay={{ show: 250, hide: 400 }}
+                      overlay={renderTooltip}
+                    >
+                      <Badge pill className='ms-4'>👑</Badge>
+                    </OverlayTrigger>
+                  }
+                </ListGroup.Item>
+              </Row>
             ))
           }
-          {
-            !chats.length > 0 && <div>No chats found</div>
-          }
-        </Card>
+        </ListGroup>
+        {
+          !chats.length > 0 && <div>No chats found</div>
+        }
         {
           selectedChat ?
             <ChatWindow chatData={selectedChat} userData={userData} setSelectedChatCallback={setSelectedChat}></ChatWindow>
             :
-            <Button onClick={() => setNewChat(true)}>New Chat</Button>
+            <Button onClick={() => setNewChat(true)}>New chat</Button>
         }
         {
           !selectedChat &&
@@ -118,7 +118,7 @@ const Chat = ({ userData }) => {
       </Card>
       {
         <Modal show={showChatInvitations} backdrop='static' centered>
-          <Modal.Header className='text-center'><h2>Chat Invitations</h2></Modal.Header>
+          <Modal.Header className='text-center'><h2>Chat invitations</h2></Modal.Header>
           <Modal.Body>
             {
               chatInvitations.length > 0 && chatInvitations.map((chat, id) => (

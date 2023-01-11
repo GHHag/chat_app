@@ -12,6 +12,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   const [enableChatInviting, setEnableChatInviting] = useState(false);
   const [enableChatModerating, setEnableChatModerating] = useState(false);
   const [userList, setUserList] = useState([]);
+  console.log(messages);
 
   const startSSE = () => {
     let sse = new EventSource(`/api/sse?chatId=${chatData.chat_id}`);
@@ -19,22 +20,24 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     sse.addEventListener('connect', message => {
       let data = JSON.parse(message.data);
       data.chatData = chatData;
-      console.log('[connect]', data);
+      //console.log('[connect]', data);
     });
 
     sse.addEventListener('disconnect', message => {
       let data = JSON.parse(message.data);
-      console.log('[disconnect]', data);
+      //console.log('[disconnect]', data);
       sse.close();
     });
 
     sse.addEventListener('new-message', message => {
       let data = JSON.parse(message.data);
       data.chatData = chatData;
-      console.log('[new message]', data);
-      setMessages([...messages, data])
+      //const newMessages = [...messages, data];
+      //console.log(newMessages);
+      //setMessages(newMessages);
+      setMessages(messages => [...messages, data]);
+      //setMessages([...messages, data])
       //setMessages(messages.concat([data]));
-      //setMessages(messages => [...messages, data]);
     });
   }
 
@@ -111,7 +114,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                   }
                 )
                   .then((res) => res.json())
-                  .then((data) => { setUserList(data.result) })
+                  .then((data) => setUserList(data.result))
                   .catch((err) => console.log(err.message));
               }}
               >
@@ -128,7 +131,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                   }
                 )
                   .then((res) => res.json())
-                  .then((data) => { setUserList(data.result) })
+                  .then((data) => setUserList(data.result))
                   .catch((err) => console.log(err.message))
               }}
               >

@@ -2,12 +2,10 @@ const db = require('./db');
 const passwordEncryptor = require('../../security/passwordEncryptor');
 const acl = require('../../security/acl');
 
-//let connections = [];
 let connections = {};
 
 const sse = async (req, res) => {
     // Add the response to open connections
-    //connections.push(res);
     if (!connections[req.query.chatId]) {
         connections[req.query.chatId] = [res];
     }
@@ -15,11 +13,9 @@ const sse = async (req, res) => {
         connections[req.query.chatId].push(res);
     }
 
-    // listen for client disconnection
-    // and remove the client's response
-    // from the open connections list
+    // listen for client disconnection and remove the client's response from the 
+    // open connections list
     req.on('close', () => {
-        //connections = connections.filter(openRes => openRes != res)
         connections[req.query.chatId] = connections[req.query.chatId].filter(openRes => openRes != res)
 
         // message all open connections that a client disconnected
@@ -28,17 +24,14 @@ const sse = async (req, res) => {
         });
     });
 
-    // Set headers to mark that this is SSE
-    // and that we don't close the connection
+    // Set headers to mark that this is SSE and that we don't close the connection
     res.set({
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache'
     });
 
-    // message all connected clients that this 
-    // client connected
+    // message all connected clients that this client connected
     broadcast('connect', {
-        //message: 'clients connected: ' + connections.length
         message: 'clients connected: ' + connections[req.query.chatId].length,
         chatId: req.query.chatId
     });
@@ -49,7 +42,6 @@ function broadcast(event, data) {
     console.log('broadcast event,', data);
     // loop through all open connections and send
     // some data without closing the connection (res.write)
-    //for (let res of connections) {
     for (let res of connections[data.chatId]) {
         // syntax for a SSE message: 'event: message \ndata: "the-message" \n\n'
         res.write('event:' + event + '\ndata:' + JSON.stringify(data) + '\n\n');
@@ -57,7 +49,10 @@ function broadcast(event, data) {
 }
 
 const registerUser = async (req, res) => {
-    if (!req.body.username || !req.body.password) {// || !req.body.userRole) {
+    if (
+        !req.body.username || !req.body.password ||// || !req.body.userRole ||
+        !req.body.password.match(/^(?=.*\d)(?=.*[A-Z])(?=.*[!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/)
+    ) {
         res.status(500).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
@@ -215,6 +210,31 @@ const getUsers = async (req, res) => {
                 LIMIT $2
             `,
             [req.session.user.id, req.query.limit ? req.query.limit : 10]
+        );
+
+        res.status(200).json({ success: true, result: query.rows });
+    }
+    catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+}
+
+const searchUsers = async (req, res) => {
+    if (!acl(req.route.path, req)) {
+        res.status(405).json({ error: 'Not allowed' });
+        return;
+    }
+
+    try {
+        const query = await db.query(
+            `
+                SELECT id, username
+                FROM users
+                WHERE id != $1
+                AND user_role = 'user'
+                AND username LIKE $2
+            `,
+            [req.session.user.id, `%${req.query.searchValue}%`]
         );
 
         res.status(200).json({ success: true, result: query.rows });
@@ -551,24 +571,6 @@ const disconnectFromChat = async (req, res) => {
     }
 }
 
-/* const x = async (req, res) => {
-    if (!req) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
-    }
-
-    if (!acl(req.route.path, req)) {
-        res.status(405).json({ error: 'Not allowed' });
-        return;
-    }
-
-    try {
-
-    }
-    catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-} */
-
 module.exports = {
     sse,
     registerUser,
@@ -577,6 +579,7 @@ module.exports = {
     logoutUser,
     blockUser,
     getUsers,
+    searchUsers,
     getChats,
     createChat,
     getInvitationEligbleUsers,

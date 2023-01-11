@@ -2,6 +2,40 @@
     font-size: 20px
 }
 
+.usersListGroup {
+    max-height: 200px;
+    margin-bottom: 10px;
+    overflow: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.usersListGroupItem {
+    border-radius: 15px;
+}
+
+.usersListGroupItem:hover {
+    cursor: pointer;
+    background: rgb(95, 145, 255);
+}
+
+.chatListGroup {
+    max-height: 400px;
+    margin-bottom: 10px;
+    overflow: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.chatListGroupItem {
+    border-radius: 15px;
+}
+
+.chatListGroupItem:hover {
+    cursor: pointer;
+    background: rgb(95, 145, 255);
+}
+
 .messageOther {
     display: block;
     margin-right: auto;

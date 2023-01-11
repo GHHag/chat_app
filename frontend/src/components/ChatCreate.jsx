@@ -28,18 +28,18 @@ const ChatCreate = ({ setSelectedChatCallback, setNewChatCallback }) => {
   return (
     <>
       <Card className='p-2 m-2'>
-        <Row><h3>Create New Chat</h3></Row>
+        <Row><h3>Create new chat</h3></Row>
         <Form onSubmit={submitNewChatForm}>
           <Form.Group>
             <Form.Control
               className='my-2'
               type='text'
               value={chatSubject}
-              placeholder={'Enter Chat Subject...'}
+              placeholder={'Enter chat subject...'}
               onChange={(event) => setChatSubject(event.target.value)}
             />
           </Form.Group>
-          <Button type='submit' className='my-2'>Create Chat</Button>
+          <Button type='submit' className='my-2'>Create chat</Button>
         </Form>
       </Card>
     </>
