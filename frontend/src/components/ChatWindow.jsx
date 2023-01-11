@@ -12,7 +12,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   const [enableChatInviting, setEnableChatInviting] = useState(false);
   const [enableChatModerating, setEnableChatModerating] = useState(false);
   const [userList, setUserList] = useState([]);
-  console.log(messages);
+  //console.log(messages);
 
   const startSSE = () => {
     let sse = new EventSource(`/api/sse?chatId=${chatData.chat_id}`);
@@ -179,34 +179,36 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
               </Form.Group>
               <Button type='submit'>Send invite</Button>
             </Form>
-            {
-              userList.length > 0 && userList.map((user, id) => (
-                <Row className='text-center align-items-center m-2' key={id}>
-                  <Col>{user.username}</Col>
-                  <Col>
-                    <Button onClick={async (e) => {
-                      await fetch(
-                        `api/chat/invite?chatId=${chatData.chat_id}&userId=${user.id}`,
-                        {
-                          method: 'POST',
-                          header: {
-                            'Content-Type': 'application/json'
+            <div className='userListWrapper'>
+              {
+                userList.length > 0 && userList.map((user, id) => (
+                  <Row className='text-center align-items-center m-2' key={id}>
+                    <Col>{user.username}</Col>
+                    <Col>
+                      <Button onClick={async (e) => {
+                        await fetch(
+                          `api/chat/invite?chatId=${chatData.chat_id}&userId=${user.id}`,
+                          {
+                            method: 'POST',
+                            header: {
+                              'Content-Type': 'application/json'
+                            }
                           }
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((data) => console.log(data))
-                        .catch((err) => console.log(err.message));
-                      e.target.disabled = true;
-                      e.target.textContent = '✔️'
-                      e.target.style.backgroundColor = 'green';
-                    }}>
-                      ➕
-                    </Button>
-                  </Col>
-                </Row>
-              ))
-            }
+                        )
+                          .then((res) => res.json())
+                          .then((data) => console.log(data))
+                          .catch((err) => console.log(err.message));
+                        e.target.disabled = true;
+                        e.target.textContent = '✔️'
+                        e.target.style.backgroundColor = 'green';
+                      }}>
+                        ➕
+                      </Button>
+                    </Col>
+                  </Row>
+                ))
+              }
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={() => setEnableChatInviting(false)}>🚫 Close</Button>
@@ -226,36 +228,38 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
               </Form.Group>
               <Button type='submit'>Send invite</Button>
             </Form> */}
-            {
-              userList.length > 0 && userList.map((user, id) => (
-                <Row className='text-center align-items-center m-2' key={id}>
-                  <Col>{user.username}</Col>
-                  <Col>
-                    <Button
-                      variant={!user.banned ? 'warning' : 'primary'}
-                      onClick={async (e) => {
-                        await fetch(
-                          `api/chat/ban?chatId=${chatData.chat_id}&userId=${user.id}`,
-                          {
-                            method: 'PUT',
-                            header: {
-                              'Content-Type': 'application/json'
+            <div className='userListWrapper'>
+              {
+                userList.length > 0 && userList.map((user, id) => (
+                  <Row className='text-center align-items-center m-2' key={id}>
+                    <Col>{user.username}</Col>
+                    <Col>
+                      <Button
+                        variant={!user.banned ? 'warning' : 'primary'}
+                        onClick={async (e) => {
+                          await fetch(
+                            `api/chat/ban?chatId=${chatData.chat_id}&userId=${user.id}`,
+                            {
+                              method: 'PUT',
+                              header: {
+                                'Content-Type': 'application/json'
+                              }
                             }
-                          }
-                        )
-                          .then((res) => res.json())
-                          .then((data) => console.log(data))
-                          .catch((err) => console.log(err.message));
-                        e.target.disabled = true;
-                        e.target.textContent = '✔️'
-                        e.target.style.backgroundColor = 'green';
-                      }}>
-                      {!user.banned ? '🏴 Ban' : '🏳️ Unban'}
-                    </Button>
-                  </Col>
-                </Row>
-              ))
-            }
+                          )
+                            .then((res) => res.json())
+                            .then((data) => console.log(data))
+                            .catch((err) => console.log(err.message));
+                          e.target.disabled = true;
+                          e.target.textContent = '✔️'
+                          e.target.style.backgroundColor = 'green';
+                        }}>
+                        {!user.banned ? '🏴 Ban' : '🏳️ Unban'}
+                      </Button>
+                    </Col>
+                  </Row>
+                ))
+              }
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={() => setEnableChatModerating(false)}>🚫 Close</Button>

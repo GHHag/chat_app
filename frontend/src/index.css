@@ -53,3 +53,16 @@
     border-radius: 15px;
     max-width: fit-content;
 }
+
+.userListWrapper {
+    max-height: 200px;
+    margin-bottom: 10px;
+    overflow: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.setShowUsersP:hover {
+    cursor: pointer;
+    color: rgb(95, 145, 255);
+}

@@ -61,7 +61,7 @@ const Chat = ({ userData }) => {
 
   return (
     <>
-      <p onClick={() => setShowUsers(!showUsers)} className='p-2 m-2'>
+      <p onClick={() => setShowUsers(!showUsers)} className='p-2 m-2 setShowUsersP'>
         {!showUsers ? 'Show users' : 'Hide users'}
       </p>
       {showUsers && <UserList />}
@@ -107,13 +107,21 @@ const Chat = ({ userData }) => {
         }
         {
           selectedChat ?
-            <ChatWindow chatData={selectedChat} userData={userData} setSelectedChatCallback={setSelectedChat}></ChatWindow>
+            <ChatWindow
+              chatData={selectedChat}
+              userData={userData}
+              setSelectedChatCallback={setSelectedChat}
+            />
             :
             <Button onClick={() => setNewChat(true)}>New chat</Button>
         }
         {
-          !selectedChat &&
-          newChat && <ChatCreate setSelectedChatCallback={setSelectedChat} setNewChatCallback={setNewChat} />
+          !selectedChat && newChat &&
+          <ChatCreate
+            setSelectedChatCallback={setSelectedChat}
+            setNewChatCallback={setNewChat}
+            setChatsCallback={setChats}
+          />
         }
       </Card>
       {

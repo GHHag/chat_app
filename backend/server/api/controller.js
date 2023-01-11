@@ -8,6 +8,7 @@ const sse = async (req, res) => {
     // Add the response to open connections
     if (!connections[req.query.chatId]) {
         connections[req.query.chatId] = [res];
+        //connections[req.query.chatId].openChatMessages = [];
     }
     else {
         connections[req.query.chatId].push(res);
@@ -45,6 +46,9 @@ function broadcast(event, data) {
     for (let res of connections[data.chatId]) {
         // syntax for a SSE message: 'event: message \ndata: "the-message" \n\n'
         res.write('event:' + event + '\ndata:' + JSON.stringify(data) + '\n\n');
+        /* if (event === 'new-message') {
+            connections[data.chatId].openChatMessages.push(data);
+        } */
     }
 }
 
@@ -208,6 +212,7 @@ const getUsers = async (req, res) => {
                 WHERE id != $1
                 AND user_role = 'user'
                 LIMIT $2
+                ORDER BY username ASC
             `,
             [req.session.user.id, req.query.limit ? req.query.limit : 10]
         );
@@ -233,6 +238,7 @@ const searchUsers = async (req, res) => {
                 WHERE id != $1
                 AND user_role = 'user'
                 AND username LIKE $2
+                ORDER BY username ASC
             `,
             [req.session.user.id, `%${req.query.searchValue}%`]
         );

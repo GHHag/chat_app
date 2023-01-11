@@ -7,26 +7,12 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 const UserList = () => {
   const [userList, setUserList] = useState([]);
-  const [username, setUsername] = useState([]);
-
-  const handleSearchUser = async (e) => {
-    setUsername(e.target.value);
-    console.log(username);
-    await fetch(
-      `/api/user/search?limit=15&searchValue=${username}`,
-      {
-        method: 'GET'
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => setUserList(data.result))
-      .catch((err) => console.log(err.message));
-  }
+  const [searchedUsername, setSearchedUsername] = useState('');
 
   useEffect(() => {
-    const getUsers = async () => {
+    const getUserList = async () => {
       await fetch(
-        'api/user?limit=15',
+        `/api/user/search?limit=15&searchValue=${searchedUsername}`,
         {
           method: 'GET'
         }
@@ -36,8 +22,8 @@ const UserList = () => {
         .catch((err) => console.log(err.message));
     }
 
-    getUsers();
-  }, []);
+    getUserList();
+  }, [searchedUsername]);
 
   return (
     <>
@@ -45,18 +31,20 @@ const UserList = () => {
         <Form className='p-2 m-2'>
           <Form.Group>
             <Form.Control
+              autoComplete='off'
               className='my-2'
               type='text'
               name='username'
-              value={username}
+              value={searchedUsername}
               placeholder='Search...'
-              onChange={(event) => handleSearchUser(event)}
+              onChange={(event) => setSearchedUsername(event.target.value)}
             />
           </Form.Group>
         </Form>
+        <Row className='ms-2'><Col><h4>Users</h4></Col></Row>
         <ListGroup className='p-2 m-2 usersListGroup'>
           {
-            userList.length > 0 && userList.map((user, id) => (
+            userList && userList.length > 0 && userList.map((user, id) => (
               <Row key={id}>
                 <Col>
                   <ListGroup.Item className='usersListGroupItem'>{user.username}</ListGroup.Item>
