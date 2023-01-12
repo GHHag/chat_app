@@ -10,6 +10,14 @@
     -webkit-overflow-scrolling: touch;
 }
 
+.listWrapper {
+    max-height: 200px;
+    margin-bottom: 10px;
+    overflow: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
 .usersListGroupItem {
     border-radius: 15px;
 }
@@ -55,14 +63,14 @@
 }
 
 .userListWrapper {
-    max-height: 200px;
+    max-height: 300px;
     margin-bottom: 10px;
     overflow: scroll;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 }
 
-.setShowUsersP:hover {
+.setShowUsersBadge:hover {
     cursor: pointer;
-    color: rgb(95, 145, 255);
+    color: rgb(6, 7, 8);
 }

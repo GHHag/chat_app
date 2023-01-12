@@ -57,7 +57,7 @@ const registerUser = async (req, res) => {
         !req.body.username || !req.body.password ||// || !req.body.userRole ||
         !req.body.password.match(/^(?=.*\d)(?=.*[A-Z])(?=.*[!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/)
     ) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -98,7 +98,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     if (!req.body.username || !req.body.password) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -173,7 +173,7 @@ const logoutUser = async (req, res) => {
 
 const blockUser = async (req, res) => {
     if (!req.params.id) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -277,7 +277,7 @@ const getChats = async (req, res) => {
 
 const createChat = async (req, res) => {
     if (!req.body.subject) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -305,7 +305,7 @@ const createChat = async (req, res) => {
 
 const getInvitationEligbleUsers = async (req, res) => {
     if (!req.query.chatId) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -344,7 +344,7 @@ const getInvitationEligbleUsers = async (req, res) => {
 const inviteToChat = async (req, res) => {
     // make sure only the owner of the chat and admins can invite
     if (!req.query.chatId || !req.query.userId) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -381,7 +381,7 @@ const inviteToChat = async (req, res) => {
 
 const getChatUsers = async (req, res) => {
     if (!req.query.chatId) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -437,7 +437,7 @@ const getChatInvites = async (req, res) => {
 
 const acceptChatInvite = async (req, res) => {
     if (!req.params.id) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -467,7 +467,7 @@ const acceptChatInvite = async (req, res) => {
 const banFromChat = async (req, res) => {
     // make sure only chat owners and admins can ban users from a chat
     if (!req.query.chatId || !req.query.userId) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -497,7 +497,7 @@ const banFromChat = async (req, res) => {
 
 const sendMessage = async (req, res) => {
     if (!req.body) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -519,7 +519,7 @@ const sendMessage = async (req, res) => {
 
 const getChatMessages = async (req, res) => {
     if (!req) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 
@@ -538,7 +538,7 @@ const getChatMessages = async (req, res) => {
 
 const deleteMessage = async (req, res) => {
     if (!req) {
-        res.status(500).json({ success: false, error: 'Incorrect parameters' });
+        res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
 

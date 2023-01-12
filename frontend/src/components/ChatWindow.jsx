@@ -7,11 +7,12 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [enableChatInviting, setEnableChatInviting] = useState(false);
   const [enableChatModerating, setEnableChatModerating] = useState(false);
   const [userList, setUserList] = useState([]);
+  const [searchedUsername, setSearchedUsername] = useState('');
   //console.log(messages);
 
   const startSSE = () => {
@@ -45,6 +46,27 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     startSSE()
     //}, [messages]);
   }, []);
+
+  useEffect(() => {
+    const getUserList = async () => {
+      await fetch(
+        `/api/user/search?limit=15&searchValue=${searchedUsername}`,
+        {
+          method: 'GET'
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => setUserList(data.result))
+        .catch((err) => console.log(err.message));
+    }
+
+    getUserList();
+  }, [searchedUsername]);
+
+  /* useEffect(() => {
+    let scroll_to_bottom = document.querySelector(".chatDiv")
+    scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight
+  }, [messages]) */
 
   const getChatMessages = async (chatId) => {
     //console.log(chatId);
@@ -173,11 +195,14 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
             <Form onSubmit={submitChatInvite}>
               <Form.Group>
                 <Form.Control
+                  autoComplete='off'
+                  className='my-2'
                   type='text'
-                  placeholder={'Find user...'}
+                  value={searchedUsername}
+                  placeholder='Search...'
+                  onChange={(event) => setSearchedUsername(event.target.value)}
                 />
               </Form.Group>
-              <Button type='submit'>Send invite</Button>
             </Form>
             <div className='userListWrapper'>
               {
@@ -219,15 +244,6 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
         <Modal show={enableChatModerating} backdrop='static' centered>
           <Modal.Header className='text-center'><h2>Moderate users</h2></Modal.Header>
           <Modal.Body>
-            {/* <Form onSubmit={{}}>
-              <Form.Group>
-                <Form.Control
-                  type='text'
-                  placeholder={'Find user...'}
-                />
-              </Form.Group>
-              <Button type='submit'>Send invite</Button>
-            </Form> */}
             <div className='userListWrapper'>
               {
                 userList.length > 0 && userList.map((user, id) => (

@@ -61,9 +61,9 @@ const Chat = ({ userData }) => {
 
   return (
     <>
-      <p onClick={() => setShowUsers(!showUsers)} className='p-2 m-2 setShowUsersP'>
+      <Badge onClick={() => setShowUsers(!showUsers)} className='p-2 m-2 setShowUsersBadge'>
         {!showUsers ? 'Show users' : 'Hide users'}
-      </p>
+      </Badge>
       {showUsers && <UserList />}
       <Card className='p-2 m-2 text-center'>
         <Row className='align-items-center'>
@@ -128,36 +128,38 @@ const Chat = ({ userData }) => {
         <Modal show={showChatInvitations} backdrop='static' centered>
           <Modal.Header className='text-center'><h2>Chat invitations</h2></Modal.Header>
           <Modal.Body>
-            {
-              chatInvitations.length > 0 && chatInvitations.map((chat, id) => (
-                <Row className='text-center align-items-center m-2' key={id}>
-                  <Col>{chat.chat_subject}</Col>
-                  <Col>
-                    <Button
-                      onClick={async (e) => {
-                        await fetch(
-                          `api/chat/accept-invite/${chat.id}`,
-                          {
-                            method: 'PUT',
-                            headers: {
-                              'Content-Type': 'application/json'
+            <div className='listWrapper'>
+              {
+                chatInvitations.length > 0 && chatInvitations.map((chat, id) => (
+                  <Row className='text-center align-items-center m-2' key={id}>
+                    <Col>{chat.chat_subject}</Col>
+                    <Col>
+                      <Button
+                        onClick={async (e) => {
+                          await fetch(
+                            `api/chat/accept-invite/${chat.id}`,
+                            {
+                              method: 'PUT',
+                              headers: {
+                                'Content-Type': 'application/json'
+                              }
                             }
-                          }
-                        )
-                          .then((res) => res.json())
-                          .then((data) => console.log(data))
-                          .catch((err) => console.log(err.message));
-                        e.target.disabled = true;
-                        e.target.textContent = '✔️'
-                        e.target.style.backgroundColor = 'green';
-                      }}
-                    >
-                      Join
-                    </Button>
-                  </Col>
-                </Row>
-              ))
-            }
+                          )
+                            .then((res) => res.json())
+                            .then((data) => console.log(data))
+                            .catch((err) => console.log(err.message));
+                          e.target.disabled = true;
+                          e.target.textContent = '✔️'
+                          e.target.style.backgroundColor = 'green';
+                        }}
+                      >
+                        Join
+                      </Button>
+                    </Col>
+                  </Row>
+                ))
+              }
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={() => setShowChatInvitations(false)}>🚫 Close</Button>

@@ -8,8 +8,6 @@ const api_url = process.env.API_URL;
 
 const server = express();
 
-let salt = 'someUnusualStringThatIsUniqueForThisProject';
-
 if (!process.env.COOKIE_SALT) {
     console.log('Missing env. variable COOKIE_SALT');
     process.exit();
@@ -43,7 +41,7 @@ server.use(session({
     store: store
 }));
 
-server.use(express.json({ limit: '100MB' }));
+server.use(express.json({ limit: '10KB' }));
 server.use(api_url, router);
 
-server.listen(port, () => console.log(`Server live at ${port}`));
+server.listen(port, () => console.log(`Server live at port ${port}`));
