@@ -466,6 +466,7 @@ const acceptChatInvite = async (req, res) => {
 
 const banFromChat = async (req, res) => {
     // make sure only chat owners and admins can ban users from a chat
+    // testa med postman så att denna funktionen funkar
     if (!req.query.chatId || !req.query.userId) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
@@ -477,17 +478,42 @@ const banFromChat = async (req, res) => {
     }
 
     try {
-        await db.query(
-            `
+        let banUserQuery = { rowCount: 0 };
+        if (req.session.user.userRole === 'superadmin') {
+            banUserQuery = await db.query(
+                `
                 UPDATE chat_users
                 SET banned = NOT banned
                 WHERE chat_id = $1
                 AND user_id = $2
             `,
-            [req.query.chatId, req.query.userId]
-        );
+                [req.query.chatId, req.query.userId]
+            );
+        }
+        else {
+            banUserQuery = await db.query(
+                `
+                UPDATE chat_users
+                SET banned = NOT banned
+                WHERE chat_id = $1
+                AND user_id = $2
+                AND (
+                    SELECT COUNT(*)
+                    FROM chats
+                    WHERE created_by = $3
+                    AND id = $1
+                ) > 0
+            `,
+                [req.query.chatId, req.query.userId, req.session.user.id]
+            );
+        }
 
-        res.status(200).json({ success: true, result: 'User banned/unbanned from chat' });
+        if (banUserQuery.rowCount === 1) {
+            res.status(200).json({ success: true, result: 'User banned/unbanned from chat' });
+        }
+        else {
+            res.status(405).json({ error: 'Not allowed' });
+        }
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });

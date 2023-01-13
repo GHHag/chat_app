@@ -21,6 +21,7 @@ const Chat = ({ userData }) => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [showUsers, setShowUsers] = useState(false);
   const [newChat, setNewChat] = useState(false);
+  console.log(chats);
 
   useEffect(() => {
     if (!userData) {
@@ -55,6 +56,21 @@ const Chat = ({ userData }) => {
     getChatInvitations();
   }, []);
 
+  const sortChatsByName = () => {
+    let sortedChats = chats.sort((a, b) => {
+      const chatSubjectA = a.chat_subject.toUpperCase();
+      const chatSubjectB = b.chat_subject.toUpperCase();
+      if (chatSubjectA < chatSubjectB) {
+        return -1;
+      }
+      if (chatSubjectA > chatSubjectB) {
+        return 1;
+      }
+      return 0;
+    });
+    setChats(sortedChats);
+  }
+
   const renderTooltip = (props) => (
     <Tooltip id='button-tooltip' {...props}>Chat owner</Tooltip>
   );
@@ -77,6 +93,16 @@ const Chat = ({ userData }) => {
             </Button>
           </Col>
         </Row>
+        <hr></hr>
+        {
+          !selectedChat &&
+          <Row>
+            <Col><div>Order chats by</div></Col>
+            <Col><div className='orderByDiv' onClick={() => sortChatsByName()}>Name</div></Col>
+            <Col><div className='orderByDiv'>Latest messages</div></Col>
+            <Col><div className='orderByDiv'>My latest message</div></Col>
+          </Row>
+        }
         <ListGroup className='p-2 m-2 chatListGroup'>
           {
             !selectedChat && chats.length > 0 && !newChat && chats.map((chat, id) => (

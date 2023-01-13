@@ -13,7 +13,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   const [enableChatModerating, setEnableChatModerating] = useState(false);
   const [userList, setUserList] = useState([]);
   const [searchedUsername, setSearchedUsername] = useState('');
-  //console.log(messages);
+  console.log(messages);
 
   const startSSE = () => {
     let sse = new EventSource(`/api/sse?chatId=${chatData.chat_id}`);
@@ -63,10 +63,10 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     getUserList();
   }, [searchedUsername]);
 
-  /* useEffect(() => {
-    let scroll_to_bottom = document.querySelector(".chatDiv")
+  useEffect(() => {
+    let scroll_to_bottom = document.querySelector(".chatWrapper")
     scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight
-  }, [messages]) */
+  }, [messages]);
 
   const getChatMessages = async (chatId) => {
     //console.log(chatId);
@@ -163,18 +163,20 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
           </Row>
         }
         <div className='my-2'>Messages</div>
-        {
-          messages.length > 0 && messages.map((message, id) => (
-            <Col key={id}>
-              <Card
-                className={message.fromId === userData.id ? 'messageMine my-1 px-1' : 'messageOther my-1 px-1'}
-              >
-                <Col>{message.from} @ ⏲ {new Date(message.timestamp).toISOString().slice(0, 16).split("T").join(" ")}</Col>
-                <Col>{message.content}</Col>
-              </Card>
-            </Col>
-          ))
-        }
+        <div className='chatWrapper'>
+          {
+            messages.length > 0 && messages.map((message, id) => (
+              <Col key={id}>
+                <Card
+                  className={message.fromId === userData.id ? 'messageMine my-1 px-1' : 'messageOther my-1 px-1'}
+                >
+                  <Col>{message.from} @ ⏲ {new Date(message.timestamp).toISOString().slice(0, 16).split("T").join(" ")}</Col>
+                  <Col>{message.content}</Col>
+                </Card>
+              </Col>
+            ))
+          }
+        </div>
         <Form onSubmit={submitMessageForm} autoComplete='on'>
           <Form.Group>
             <Form.Control
