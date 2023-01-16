@@ -139,7 +139,9 @@ const Chat = ({ userData }) => {
               setSelectedChatCallback={setSelectedChat}
             />
             :
-            <Button onClick={() => setNewChat(true)}>New chat</Button>
+            <Button onClick={() => setNewChat(!newChat)}>
+              {!newChat ? 'New chat' : '🚫 Close'}
+            </Button>
         }
         {
           !selectedChat && newChat &&

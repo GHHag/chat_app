@@ -8,7 +8,6 @@ router.post('/user/register', controller.registerUser);
 router.post('/user/login', controller.loginUser);
 router.get('/user/login', controller.getLoggedInUser);
 router.delete('/user/logout', controller.logoutUser);
-router.post('/user/block', controller.blockUser);
 router.get('/user', controller.getUsers);
 router.get('/user/search', controller.searchUsers);
 

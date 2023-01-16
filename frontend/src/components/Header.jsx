@@ -49,7 +49,6 @@ const Header = ({ user, setUserCallback }) => {
             <Link to='/register'><div className='header-link-div'>Register</div></Link>
           </Col>
         }
-
       </Row>
     </>
   )

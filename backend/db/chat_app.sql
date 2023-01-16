@@ -68,20 +68,6 @@ ALTER TABLE IF EXISTS public.messages
 
 ---------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS public.user_blockings
-(
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id uuid NOT NULL,
-    blocked_user_id uuid NOT NULL,
-    CONSTRAINT user_id_fk FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT blocked_user_id_fk FOREIGN KEY(blocked_user_id) REFERENCES users(id)
-);
-
-ALTER TABLE IF EXISTS public.user_blockings
-    OWNER to postgres;
-
----------------------------------------------------------------------
-
 CREATE TABLE IF NOT EXISTS public.session 
 (
   sid VARCHAR NOT NULL COLLATE "default",
@@ -114,6 +100,3 @@ CREATE TRIGGER t_create_chat
     EXECUTE PROCEDURE f_insert_chat_creator();
 
 ---------------------------------------------------------------------
-
--- TRIGGER som checkar att user som försöker banna från en chat e admin
--- eller skapare av chatten?

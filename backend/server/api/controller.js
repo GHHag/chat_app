@@ -54,7 +54,7 @@ function broadcast(event, data) {
 
 const registerUser = async (req, res) => {
     if (
-        !req.body.username || !req.body.password ||// || !req.body.userRole ||
+        !req.body.username || !req.body.password ||
         !req.body.password.match(/^(?=.*\d)(?=.*[A-Z])(?=.*[!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/)
     ) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
@@ -74,7 +74,6 @@ const registerUser = async (req, res) => {
                 VALUES($1, $2, $3)
                 RETURNING *
             `,
-            //[req.body.username, hashedPassword, req.body.userRole]
             [req.body.username, hashedPassword, 'user']
         );
 
@@ -171,33 +170,6 @@ const logoutUser = async (req, res) => {
     }
 }
 
-const blockUser = async (req, res) => {
-    if (!req.params.id) {
-        res.status(400).json({ success: false, error: 'Incorrect parameters' });
-        return;
-    }
-
-    if (!acl(req.route.path, req)) {
-        res.status(405).json({ error: 'Not allowed' });
-        return;
-    }
-
-    try {
-        await db.query(
-            `
-                INSERT INTO user_blockings(user_id, blocked_user_id)
-                VALUES ($1, $2)
-            `,
-            [req.session.user.id, req.params.id]
-        );
-
-        res.status(200).json({ success: true, result: 'User blocked' });
-    }
-    catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-}
-
 const getUsers = async (req, res) => {
     if (!acl(req.route.path, req)) {
         res.status(405).json({ error: 'Not allowed' });
@@ -257,16 +229,27 @@ const getChats = async (req, res) => {
     }
 
     try {
-        const query = await db.query(
-            `
-                SELECT *
-                FROM chats, chat_users
-                WHERE chats.id = chat_users.chat_id
-                AND chat_users.user_id = $1
-                AND chat_users.invitation_accepted = true
-            `,
-            [req.session.user.id]
-        );
+        let query;
+        if (req.session.user.userRole === 'superadmin') {
+            query = await db.query(
+                `
+                    SELECT id AS chat_id, created_by, chat_subject 
+                    FROM chats
+                `
+            );
+        }
+        else {
+            query = await db.query(
+                `
+                    SELECT *
+                    FROM chats, chat_users
+                    WHERE chats.id = chat_users.chat_id
+                    AND chat_users.user_id = $1
+                    AND chat_users.invitation_accepted = true
+                `,
+                [req.session.user.id]
+            );
+        }
 
         res.status(200).json({ success: true, result: query.rows });
     }
@@ -342,7 +325,6 @@ const getInvitationEligbleUsers = async (req, res) => {
 }
 
 const inviteToChat = async (req, res) => {
-    // make sure only the owner of the chat and admins can invite
     if (!req.query.chatId || !req.query.userId) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
@@ -355,10 +337,6 @@ const inviteToChat = async (req, res) => {
 
     try {
         await db.query(
-            /* `
-                INSERT INTO chat_users (chat_id, user_id)
-                VALUES ($1, $2)
-            `, */
             `
                 INSERT INTO chat_users (chat_id, user_id)
                 SELECT $1, $2
@@ -368,8 +346,14 @@ const inviteToChat = async (req, res) => {
                     WHERE chat_id = $1
                     AND user_id = $2
                 )
+                AND EXISTS(
+                    SELECT id, created_by
+                    FROM chats
+                    WHERE id = $1
+                    AND created_by = $3
+                )
             `,
-            [req.query.chatId, req.query.userId]
+            [req.query.chatId, req.query.userId, req.session.user.id]
         );
 
         res.status(200).json({ success: true, result: 'Chat invite sent' });
@@ -609,7 +593,6 @@ module.exports = {
     loginUser,
     getLoggedInUser,
     logoutUser,
-    blockUser,
     getUsers,
     searchUsers,
     getChats,

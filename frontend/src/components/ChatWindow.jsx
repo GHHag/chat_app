@@ -13,7 +13,6 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   const [enableChatModerating, setEnableChatModerating] = useState(false);
   const [userList, setUserList] = useState([]);
   const [searchedUsername, setSearchedUsername] = useState('');
-  console.log(messages);
 
   const startSSE = () => {
     let sse = new EventSource(`/api/sse?chatId=${chatData.chat_id}`);
@@ -123,9 +122,9 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
             </Button>
           </Col>
         </Row>
-        {
-          userData && chatData && userData.id === chatData.created_by &&
-          <Row>
+        <Row>
+          {
+            userData && chatData && userData.id === chatData.created_by &&
             <Col>
               <Button onClick={async () => {
                 setEnableChatInviting(true);
@@ -143,6 +142,12 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                 Invite users
               </Button>
             </Col>
+          }
+          {
+            (
+              (userData && chatData && userData.id === chatData.created_by) ||
+              (userData.userRole === 'superadmin')
+            ) &&
             <Col>
               <Button onClick={async () => {
                 setEnableChatModerating(true);
@@ -160,8 +165,8 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                 🛡️ Moderate chat
               </Button>
             </Col>
-          </Row>
-        }
+          }
+        </Row>
         <div className='my-2'>Messages</div>
         <div className='chatWrapper'>
           {

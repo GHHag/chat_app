@@ -14,9 +14,6 @@
         "/user/logout": {
             "delete": true
         },
-        "/user/block/:id": {
-            "post": true
-        },
         "/user": {
             "get": true
         },
@@ -59,15 +56,48 @@
         }
     },
     "superadmin": {
-        "/user/users": {
-            "get": true,
-            "post": true,
-            "put": true,
+        "/user/login": {
+            "get": true
+        },
+        "/user/logout": {
             "delete": true
         },
-        "/login": {
-            "get": true,
+        "/user": {
+            "get": true
+        },
+        "/user/search": {
+            "get": true
+        },
+        "/chats": {
+            "get": true
+        },
+        "/chat/create": {
+            "post": true
+        },
+        "/chat/invite": {
+            "post": true,
+            "get": true
+        },
+        "/chat/users": {
+            "get": true
+        },
+        "/chat/invites": {
+            "get": true
+        },
+        "/chat/ban": {
+            "put": true
+        },
+        "/chat/message": {
+            "post": true
+        },
+        "/chat/messages/:id": {
+            "get": true
+        },
+        "/chat/delete-message/:id": {
             "delete": true
+        },
+        "/chat/disconnect": {
+            "post": true
         }
     }
 }
