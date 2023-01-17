@@ -8,7 +8,6 @@ const sse = async (req, res) => {
     // Add the response to open connections
     if (!connections[req.query.chatId]) {
         connections[req.query.chatId] = [res];
-        //connections[req.query.chatId].openChatMessages = [];
     }
     else {
         connections[req.query.chatId].push(res);
@@ -43,15 +42,9 @@ function broadcast(event, data) {
     console.log('broadcast event,', data);
     // loop through all open connections and send
     // some data without closing the connection (res.write)
-    console.log('connections: ', connections);
-    console.log('data.chatId: ', data.chatId);
-    console.log(data);
     for (let res of connections[data.chatId]) {
         // syntax for a SSE message: 'event: message \ndata: "the-message" \n\n'
         res.write('event:' + event + '\ndata:' + JSON.stringify(data) + '\n\n');
-        /* if (event === 'new-message') {
-            connections[data.chatId].openChatMessages.push(data);
-        } */
     }
 }
 
@@ -509,7 +502,10 @@ const banFromChat = async (req, res) => {
 
 
 const sendMessage = async (req, res) => {
-    if (!req.body.chatId || !req.body.fromId || !req.body.content) {
+    if (
+        !req.body.chatId || !req.body.fromId ||
+        !req.body.content || req.body.content.length > 999
+    ) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
@@ -538,6 +534,7 @@ const sendMessage = async (req, res) => {
 }
 
 const getChatMessages = async (req, res) => {
+    // kontrollera att endast medlemmar i given chat kan hamta meddelanden
     // kontrollera att bannad user inte kan göra request att hamta meddelanden
     if (!req.params.id) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
@@ -550,9 +547,10 @@ const getChatMessages = async (req, res) => {
     }
 
     try {
-        const query = await db.query(
+        /* const query = await db.query(
             `
                 SELECT users.username AS "from",
+                    messages.id,
                     messages.content,
                     messages.message_timestamp AS "timestamp",
                     messages.from_id AS "fromId"
@@ -566,9 +564,28 @@ const getChatMessages = async (req, res) => {
                     FROM chat_users
                     WHERE chat_id = $1
                     AND user_id = $2
+                    OR EXISTS(
+                        SELECT id
+                        FROM users
+                        WHERE id = $2
+                        AND user_role = 'superadmin'
+                    )
                 )
             `,
             [req.params.id, req.session.user.id]
+        ); */
+        const query = await db.query(
+            `
+                SELECT users.username AS "from",
+                    messages.id,
+                    messages.content,
+                    messages.message_timestamp AS "timestamp",
+                    messages.from_id AS "fromId"
+                FROM users, messages
+                WHERE users.id = messages.from_id
+                AND messages.chat_id = $1 
+            `,
+            [req.params.id]
         );
 
         res.status(200).json({ success: true, result: query.rows });
@@ -579,7 +596,7 @@ const getChatMessages = async (req, res) => {
 }
 
 const deleteMessage = async (req, res) => {
-    if (!req) {
+    if (!req.params.id) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
     }
@@ -590,7 +607,16 @@ const deleteMessage = async (req, res) => {
     }
 
     try {
+        await db.query(
+            `
+                DELETE
+                FROM messages
+                WHERE id = $1
+            `,
+            [req.params.id]
+        );
 
+        res.status(200).json({ success: true, result: 'Message deleted' });
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });

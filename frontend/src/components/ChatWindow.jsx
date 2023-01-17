@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Badge from 'react-bootstrap/Badge';
 
 let sse;
 
@@ -23,12 +24,12 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     sse.addEventListener('connect', message => {
       let data = JSON.parse(message.data);
       data.chatData = chatData;
-      console.log('[connect]', data);
+      //console.log('[connect]', data);
     });
 
     sse.addEventListener('disconnect', message => {
       let data = JSON.parse(message.data);
-      console.log('[disconnect]', data);
+      //console.log('[disconnect]', data);
       sse.close();
     });
 
@@ -40,7 +41,6 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   }
 
   const getChatMessages = async (chatId) => {
-    console.log(chatId);
     await fetch(
       `/api/chat/messages/${chatId}`,
       {
@@ -181,15 +181,37 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
           }
         </Row>
         <div className='my-2'>Messages</div>
-        <div className='chatWrapper'>
+        <div className='chatWrapper text-left'>
           {
             messages.length > 0 && messages.map((message, id) => (
               <Col key={id}>
-                <Card
-                  className={message.fromId === userData.id ? 'messageMine my-1 px-1' : 'messageOther my-1 px-1'}
-                >
-                  <Col>{message.from} @ ⏲ {new Date(message.timestamp).toISOString().slice(0, 16).split("T").join(" ")}</Col>
-                  <Col>{message.content}</Col>
+                <Card className={message.fromId === userData.id ? 'messageMine my-1 px-1' : 'messageOther my-1 px-1'}>
+                  <Row>
+                    <Col>{message.from} @ ⏲ {new Date(message.timestamp).toISOString().slice(0, 16).split("T").join(" ")}</Col>
+                    {
+                      userData.userRole === 'superadmin' &&
+                      <Col>
+                        <Badge bg='danger' className='deleteMessageBadge'
+                          onClick={async () => {
+                            await fetch(
+                              `/api/chat/delete-message/${message.id}`,
+                              {
+                                method: 'DELETE'
+                              }
+                            )
+                              .then((res) => res.json())
+                              .then((data) => console.log(data))
+                              //.then(() => metod som tar bort message ur lista)
+                              .catch((err) => console.log(err.message));
+                          }}>
+                          Delete
+                        </Badge>
+                      </Col>
+                    }
+                  </Row>
+                  <Row>
+                    <Col>{message.content}</Col>
+                  </Row>
                 </Card>
               </Col>
             ))
@@ -205,7 +227,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
               onChange={(event) => setMessage(event.target.value)}
             />
           </Form.Group>
-          <Button type='submit'>Send 📨</Button>
+          <Button type='submit' disabled={message.length > 999}>Send 📨</Button>
         </Form>
       </Card >
       {
