@@ -6,6 +6,8 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
+let sse;
+
 const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
@@ -15,35 +17,44 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   const [searchedUsername, setSearchedUsername] = useState('');
 
   const startSSE = () => {
-    let sse = new EventSource(`/api/sse?chatId=${chatData.chat_id}`);
+    sse && sse.close();
+    sse = new EventSource(`/api/sse?chatId=${chatData.chat_id}`);
 
     sse.addEventListener('connect', message => {
       let data = JSON.parse(message.data);
       data.chatData = chatData;
-      //console.log('[connect]', data);
+      console.log('[connect]', data);
     });
 
     sse.addEventListener('disconnect', message => {
       let data = JSON.parse(message.data);
-      //console.log('[disconnect]', data);
+      console.log('[disconnect]', data);
       sse.close();
     });
 
     sse.addEventListener('new-message', message => {
       let data = JSON.parse(message.data);
       data.chatData = chatData;
-      //const newMessages = [...messages, data];
-      //console.log(newMessages);
-      //setMessages(newMessages);
       setMessages(messages => [...messages, data]);
-      //setMessages([...messages, data])
-      //setMessages(messages.concat([data]));
     });
+  }
+
+  const getChatMessages = async (chatId) => {
+    console.log(chatId);
+    await fetch(
+      `/api/chat/messages/${chatId}`,
+      {
+        method: 'GET'
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setMessages(data.result))
+      .catch((err) => console.log(err.message));
   }
 
   useEffect(() => {
     startSSE()
-    //}, [messages]);
+    getChatMessages(chatData.chat_id);
   }, []);
 
   useEffect(() => {
@@ -67,18 +78,8 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight
   }, [messages]);
 
-  const getChatMessages = async (chatId) => {
-    //console.log(chatId);
-    /* const getChatMessagesResponse = await fetch(
-      `/api/chat/message/${chatId}`
-    );
-    const chatMessagesJson = await getChatMessagesResponse.result.json();
-    setSelectedChatMessages(chatMessagesJson); */
-  }
-
   const submitMessageForm = async (event) => {
     event.preventDefault();
-    //await postData('api/chat/message', { content: message, fromId: userData.id });
     await fetch(
       'api/chat/message',
       {
@@ -113,8 +114,20 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
           </Col>
           <Col>
             <Button
-              onClick={() => {
-                //  fetch('api/chat/disconnect', { method: 'POST' });
+              onClick={async () => {
+                await fetch(
+                  'api/chat/disconnect',
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ chatId: chatData.chat_id })
+                  }
+                )
+                  .catch((err) => {
+                    console.log(err.messages);
+                  });
                 setSelectedChatCallback(false);
               }}
             >

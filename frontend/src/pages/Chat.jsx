@@ -21,7 +21,6 @@ const Chat = ({ userData }) => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [showUsers, setShowUsers] = useState(false);
   const [newChat, setNewChat] = useState(false);
-  console.log(chats);
 
   useEffect(() => {
     if (!userData) {
@@ -68,7 +67,8 @@ const Chat = ({ userData }) => {
       }
       return 0;
     });
-    setChats(sortedChats);
+    setChats([]);
+    setChats([...sortedChats]);
   }
 
   const renderTooltip = (props) => (
