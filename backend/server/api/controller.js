@@ -51,7 +51,7 @@ function broadcast(event, data) {
 const registerUser = async (req, res) => {
     if (
         !req.body.username || !req.body.password ||
-        !req.body.password.match(/^(?=.*\d)(?=.*[A-Z])(?=.*[!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/)
+        !req.body.password.match(/^(?=.*[\d!#$%&? "])(?=.*[A-Z])[a-zA-Z0-9!#$%&?]{8,}/)
     ) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
@@ -230,7 +230,7 @@ const getChats = async (req, res) => {
             query = await db.query(
                 `
                     SELECT id AS chat_id, created_by, chat_subject,
-                        last_message.* 
+                        last_message.last_message_timestamp 
                     FROM chats
                     LEFT JOIN last_message
                     ON chats.id = last_message.chat_id

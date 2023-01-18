@@ -60,6 +60,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
   useEffect(() => {
     const getUserList = async () => {
       await fetch(
+        // ta bort hårdkodat varde på limit?
         `/api/user/search?limit=15&searchValue=${searchedUsername}`,
         {
           method: 'GET'
@@ -89,7 +90,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
         },
         body: JSON.stringify({
           chatId: chatData.chat_id,
-          content: message,
+          content: userData.userRole === 'superadmin' ? message + ' /SUPERADMIN' : message,
           from: userData.username,
           fromId: userData.id
         })
@@ -209,8 +210,9 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                       </Col>
                     }
                   </Row>
+                  <hr style={{ margin: 0, padding: 0 }}></hr>
                   <Row>
-                    <Col>{message.content}</Col>
+                    <Col className='mt-3'>{message.content}</Col>
                   </Row>
                 </Card>
               </Col>

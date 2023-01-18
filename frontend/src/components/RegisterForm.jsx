@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -11,15 +11,23 @@ const RegisterForm = ({ setUserCallback }) => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [passwordConfirmed, setPasswordConfirmed] = useState(false);
 
+  useEffect(() => {
+    const pwCheck = () => {
+      setPasswordConfirmed(password === passwordConfirm);
+    }
+
+    pwCheck();
+  }, [password, passwordConfirm])
+
   const handlePassword = (e) => {
     setPassword(e.target.value);
     validatePassword(e);
   }
 
   const validatePassword = (e) => {
-    const validPassword = /^(?=.*\d)(?=.*[A-Z])(?=.*[!#$%&? "])[a-zA-Z0-9!#$%&?]{8,}/;
-    console.log(e.target.value);
-    console.log(e.target.value.match(validPassword));
+    const validPassword = /^(?=.*[\d!#$%&? "])(?=.*[A-Z])[a-zA-Z0-9!#$%&?]{8,}/;
+    //console.log(e.target.value);
+    //console.log(e.target.value.match(validPassword));
     if (e.target?.value && e.target.value.match(validPassword)) {
       setPasswordValid(true);
       setPassword(e.target.value);
@@ -32,16 +40,6 @@ const RegisterForm = ({ setUserCallback }) => {
 
   const handlePasswordConfirmed = (e) => {
     setPasswordConfirm(e.target.value);
-    validatePasswordConfirmed(e);
-  }
-
-  const validatePasswordConfirmed = (e) => {
-    if (password === e.target.value) {
-      setPasswordConfirmed(true);
-    }
-    else {
-      setPasswordConfirmed(false);
-    }
   }
 
   const submitForm = async (event) => {
@@ -98,7 +96,13 @@ const RegisterForm = ({ setUserCallback }) => {
               onChange={(event) => handlePasswordConfirmed(event)}
             />
           </Form.Group>
-          <Button type='submit' disabled={!passwordValid || !passwordConfirmed ? true : false} className='my-2'>Register</Button>
+          <Button
+            type='submit'
+            disabled={!passwordValid || !passwordConfirmed ? true : false}
+            className='my-2'
+          >
+            Register
+          </Button>
         </Form>
       </Card>
     </>
