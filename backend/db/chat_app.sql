@@ -84,6 +84,15 @@ CREATE INDEX "IDX_session_expire" ON "session" ("expire");
 
 ---------------------------------------------------------------------
 
+CREATE OR REPLACE VIEW last_message AS 
+SELECT chats.id AS chat_id, 
+    MAX(messages.message_timestamp) AS last_message_timestamp 
+    FROM chats, messages 
+    WHERE chats.id = messages.chat_id 
+    GROUP BY(chats.id);
+
+---------------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION f_insert_chat_creator()
 RETURNS trigger AS $$
 BEGIN

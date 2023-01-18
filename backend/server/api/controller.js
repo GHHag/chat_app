@@ -229,8 +229,11 @@ const getChats = async (req, res) => {
         if (req.session.user.userRole === 'superadmin') {
             query = await db.query(
                 `
-                    SELECT id AS chat_id, created_by, chat_subject 
+                    SELECT id AS chat_id, created_by, chat_subject,
+                        last_message.* 
                     FROM chats
+                    LEFT JOIN last_message
+                    ON chats.id = last_message.chat_id
                 `
             );
         }
@@ -238,10 +241,14 @@ const getChats = async (req, res) => {
             query = await db.query(
                 `
                     SELECT *
-                    FROM chats, chat_users
-                    WHERE chats.id = chat_users.chat_id
-                    AND chat_users.user_id = $1
-                    AND chat_users.invitation_accepted = true
+                    FROM 
+                        chats c 
+                            LEFT JOIN last_message lm
+                                ON c.id = lm.chat_id,
+                        chat_users cu
+                    WHERE c.id = cu.chat_id
+                    AND cu.user_id = $1
+                    AND cu.invitation_accepted = true
                 `,
                 [req.session.user.id]
             );
@@ -445,8 +452,6 @@ const acceptChatInvite = async (req, res) => {
 }
 
 const banFromChat = async (req, res) => {
-    // make sure only chat owners and admins can ban users from a chat
-    // testa med postman så att denna funktionen funkar
     if (!req.query.chatId || !req.query.userId) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
@@ -462,28 +467,40 @@ const banFromChat = async (req, res) => {
         if (req.session.user.userRole === 'superadmin') {
             banUserQuery = await db.query(
                 `
-                UPDATE chat_users
-                SET banned = NOT banned
-                WHERE chat_id = $1
-                AND user_id = $2
-            `,
+                    UPDATE chat_users
+                    SET banned = NOT banned
+                    WHERE chat_id = $1
+                    AND user_id = $2
+                `,
                 [req.query.chatId, req.query.userId]
             );
         }
         else {
             banUserQuery = await db.query(
+                /* `
+                    UPDATE chat_users
+                    SET banned = NOT banned
+                    WHERE chat_id = $1
+                    AND user_id = $2
+                    AND (
+                        SELECT COUNT(*)
+                        FROM chats
+                        WHERE created_by = $3
+                        AND id = $1
+                    ) > 0
+                `, */
                 `
-                UPDATE chat_users
-                SET banned = NOT banned
-                WHERE chat_id = $1
-                AND user_id = $2
-                AND (
-                    SELECT COUNT(*)
-                    FROM chats
-                    WHERE created_by = $3
-                    AND id = $1
-                ) > 0
-            `,
+                    UPDATE chat_users
+                    SET banned = NOT banned
+                    WHERE chat_id = $1
+                    AND user_id = $2
+                    AND EXISTS(
+                        SELECT id 
+                        FROM chats
+                        WHERE created_by = $3
+                        AND id = $1
+                    )
+                `,
                 [req.query.chatId, req.query.userId, req.session.user.id]
             );
         }
@@ -502,6 +519,8 @@ const banFromChat = async (req, res) => {
 
 
 const sendMessage = async (req, res) => {
+    // kontrollera så att endast chat_users och superadmins kan skicka 
+    // meddelanden i given chat
     if (
         !req.body.chatId || !req.body.fromId ||
         !req.body.content || req.body.content.length > 999
@@ -534,8 +553,6 @@ const sendMessage = async (req, res) => {
 }
 
 const getChatMessages = async (req, res) => {
-    // kontrollera att endast medlemmar i given chat kan hamta meddelanden
-    // kontrollera att bannad user inte kan göra request att hamta meddelanden
     if (!req.params.id) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
@@ -547,33 +564,6 @@ const getChatMessages = async (req, res) => {
     }
 
     try {
-        /* const query = await db.query(
-            `
-                SELECT users.username AS "from",
-                    messages.id,
-                    messages.content,
-                    messages.message_timestamp AS "timestamp",
-                    messages.from_id AS "fromId"
-                FROM users, chat_users, messages
-                WHERE users.id = chat_users.user_id
-                AND users.id = messages.from_id
-                AND chat_users.chat_id = messages.chat_id
-                AND messages.chat_id = $1
-                AND EXISTS(
-                    SELECT id 
-                    FROM chat_users
-                    WHERE chat_id = $1
-                    AND user_id = $2
-                    OR EXISTS(
-                        SELECT id
-                        FROM users
-                        WHERE id = $2
-                        AND user_role = 'superadmin'
-                    )
-                )
-            `,
-            [req.params.id, req.session.user.id]
-        ); */
         const query = await db.query(
             `
                 SELECT users.username AS "from",
@@ -584,8 +574,22 @@ const getChatMessages = async (req, res) => {
                 FROM users, messages
                 WHERE users.id = messages.from_id
                 AND messages.chat_id = $1 
+                AND EXISTS(
+                    SELECT id 
+                    FROM chat_users
+                    WHERE chat_id = $1
+                    AND user_id = $2
+                    AND banned != true
+                    OR EXISTS(
+                        SELECT id
+                        FROM users
+                        WHERE id = $2
+                        AND user_role = 'superadmin'
+                    )
+                )
+                ORDER BY timestamp ASC
             `,
-            [req.params.id]
+            [req.params.id, req.session.user.id]
         );
 
         res.status(200).json({ success: true, result: query.rows });
