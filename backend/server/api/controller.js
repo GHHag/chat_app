@@ -263,7 +263,10 @@ const getChats = async (req, res) => {
                         WHERE chats.id = messages.chat_id
                         AND from_id = $1
                     )
-                    SELECT *
+                    SELECT c.id AS "chat_id", c.created_by, c.chat_subject,
+                        cu.user_id, cu.banned, cu.invitation_accepted,
+                        lm.last_message_timestamp, 
+                        user_latest_message.user_latest_message_timestamp
                     FROM chat_users cu, chats c
                         LEFT JOIN last_message lm
                         ON c.id = lm.chat_id --,
@@ -282,6 +285,7 @@ const getChats = async (req, res) => {
                 [req.session.user.id]
             );
         }
+        console.log(query.rows);
 
         res.status(200).json({ success: true, result: query.rows });
     }

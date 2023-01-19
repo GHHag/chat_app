@@ -53,7 +53,7 @@ const Chat = ({ userData }) => {
 
     getChats();
     getChatInvitations();
-  }, [showChatInvitations]);
+  }, [showChatInvitations, selectedChat]);
 
   const sortChatsByName = () => {
     let sortedChats = chats.sort((a, b) => {
@@ -222,7 +222,7 @@ const Chat = ({ userData }) => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button onClick={() => setShowChatInvitations(false)}>🚫 Close</Button>
+            <Button onClick={() => setShowChatInvitations(false)} >🚫 Close</Button>
           </Modal.Footer>
         </Modal>
       }
