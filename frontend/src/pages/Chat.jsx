@@ -87,6 +87,22 @@ const Chat = ({ userData }) => {
     setChats([...sortedChats]);
   }
 
+  const sortChatsByUsersLatestMessage = () => {
+    let sortedChats = chats.sort((a, b) => {
+      const msgTimestampA = new Date(a.user_latest_message_timestamp);
+      const msgTimestampB = new Date(b.user_latest_message_timestamp);
+      if (msgTimestampA > msgTimestampB) {
+        return -1;
+      }
+      if (msgTimestampA < msgTimestampB) {
+        return 1;
+      }
+      return 0;
+    });
+    setChats([]);
+    setChats([...sortedChats]);
+  }
+
   const renderTooltip = (props) => (
     <Tooltip id='button-tooltip' {...props}>Chat owner</Tooltip>
   );
@@ -116,7 +132,7 @@ const Chat = ({ userData }) => {
             <Col><div>Order chats by</div></Col>
             <Col><div className='orderByDiv' onClick={() => sortChatsByName()}>Name</div></Col>
             <Col><div className='orderByDiv' onClick={() => sortChatsByLatestMessage()}>Latest message</div></Col>
-            <Col><div className='orderByDiv'>My latest message</div></Col>
+            <Col><div className='orderByDiv' onClick={() => sortChatsByUsersLatestMessage()}>My latest message</div></Col>
           </Row>
         }
         <ListGroup className='p-2 m-2 chatListGroup'>

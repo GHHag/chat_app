@@ -229,23 +229,52 @@ const getChats = async (req, res) => {
         if (req.session.user.userRole === 'superadmin') {
             query = await db.query(
                 `
+                    WITH user_last_message AS(
+                        SELECT chats.id AS chat_id, 
+                            messages.message_timestamp, messages.from_id
+                        FROM chats, messages 
+                        WHERE chats.id = messages.chat_id
+                        AND from_id = $1
+                    )
                     SELECT id AS chat_id, created_by, chat_subject,
-                        last_message.last_message_timestamp 
+                        last_message.last_message_timestamp, 
+                        user_latest_message.user_latest_message_timestamp
                     FROM chats
                     LEFT JOIN last_message
                     ON chats.id = last_message.chat_id
-                `
+                    LEFT JOIN(
+                        SELECT chat_id, 
+                            MAX(message_timestamp) AS "user_latest_message_timestamp"
+                        FROM user_last_message
+                        GROUP BY(chat_id)
+                    ) user_latest_message
+                    ON user_latest_message.chat_id = chats.id
+                `,
+                [req.session.user.id]
             );
         }
         else {
             query = await db.query(
                 `
+                    WITH user_last_message AS(
+                        SELECT chats.id AS chat_id,
+                            messages.message_timestamp, messages.from_id
+                        FROM chats, messages
+                        WHERE chats.id = messages.chat_id
+                        AND from_id = $1
+                    )
                     SELECT *
-                    FROM 
-                        chats c 
-                            LEFT JOIN last_message lm
-                                ON c.id = lm.chat_id,
-                        chat_users cu
+                    FROM chat_users cu, chats c
+                        LEFT JOIN last_message lm
+                        ON c.id = lm.chat_id --,
+                        --chat_users cu
+                    LEFT JOIN(
+                        SELECT chat_id, 
+                            MAX(message_timestamp) AS "user_latest_message_timestamp"
+                        FROM user_last_message
+                        GROUP BY(chat_id)
+                    ) user_latest_message
+                    ON user_latest_message.chat_id = c.id
                     WHERE c.id = cu.chat_id
                     AND cu.user_id = $1
                     AND cu.invitation_accepted = true
@@ -477,18 +506,6 @@ const banFromChat = async (req, res) => {
         }
         else {
             banUserQuery = await db.query(
-                /* `
-                    UPDATE chat_users
-                    SET banned = NOT banned
-                    WHERE chat_id = $1
-                    AND user_id = $2
-                    AND (
-                        SELECT COUNT(*)
-                        FROM chats
-                        WHERE created_by = $3
-                        AND id = $1
-                    ) > 0
-                `, */
                 `
                     UPDATE chat_users
                     SET banned = NOT banned

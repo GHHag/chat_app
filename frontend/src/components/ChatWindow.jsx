@@ -90,7 +90,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
         },
         body: JSON.stringify({
           chatId: chatData.chat_id,
-          content: userData.userRole === 'superadmin' ? message + ' /SUPERADMIN' : message,
+          content: userData.userRole === 'superadmin' ? message + ' /ADMIN' : message,
           from: userData.username,
           fromId: userData.id
         })
