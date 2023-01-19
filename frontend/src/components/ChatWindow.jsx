@@ -201,8 +201,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                               }
                             )
                               .then((res) => res.json())
-                              .then((data) => console.log(data))
-                              //.then(() => metod som tar bort message ur lista)
+                              .then((data) => { console.log(data); getChatMessages(chatData.chat_id); })
                               .catch((err) => console.log(err.message));
                           }}>
                           Delete

@@ -536,11 +536,8 @@ const banFromChat = async (req, res) => {
 
 
 const sendMessage = async (req, res) => {
-    // kontrollera så att endast chat_users och superadmins kan skicka 
-    // meddelanden i given chat
     if (
-        !req.body.chatId || !req.body.fromId ||
-        !req.body.content || req.body.content.length > 999
+        !req.body.chatId || !req.body.content || req.body.content.length > 999
     ) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
         return;
@@ -553,16 +550,35 @@ const sendMessage = async (req, res) => {
 
     try {
         let message = req.body;
+        message.fromId = req.session.user.id
         message.timestamp = Date.now();
-        await db.query(
-            `
+        const query = await db.query(
+            ` 
                 INSERT INTO messages(chat_id, from_id, content, message_timestamp)
-                VALUES($1, $2, $3, to_timestamp($4 / 1000.0))
+                SELECT $1, $2, $3, to_timestamp($4 / 1000.0)
+                WHERE EXISTS(
+                    SELECT 1
+                    FROM chat_users
+                    WHERE chat_id = $1
+                    AND user_id = $2
+                )
+                OR EXISTS(
+                    SELECT 1
+                    FROM users
+                    WHERE id = $2
+                    AND user_role = 'superadmin'
+                )
             `,
-            [req.body.chatId, req.body.fromId, req.body.content, message.timestamp]
+            [req.body.chatId, req.session.user.id, req.body.content, message.timestamp]
         );
-        broadcast('new-message', message);
-        res.send('ok');
+
+        if (query.rowCount > 0) {
+            broadcast('new-message', message);
+            res.send('ok');
+        }
+        else {
+            res.send('not ok');
+        }
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });

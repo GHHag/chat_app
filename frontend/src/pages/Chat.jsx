@@ -53,7 +53,7 @@ const Chat = ({ userData }) => {
 
     getChats();
     getChatInvitations();
-  }, []);
+  }, [showChatInvitations]);
 
   const sortChatsByName = () => {
     let sortedChats = chats.sort((a, b) => {
