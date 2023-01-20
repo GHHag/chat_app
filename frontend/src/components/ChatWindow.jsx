@@ -116,7 +116,8 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
           <Col>
             <Button
               onClick={async () => {
-                await fetch(
+                //sse.close();
+                /* await fetch(
                   'api/chat/disconnect',
                   {
                     method: 'POST',
@@ -128,7 +129,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                 )
                   .catch((err) => {
                     console.log(err.messages);
-                  });
+                  }); */
                 setSelectedChatCallback(false);
               }}
             >

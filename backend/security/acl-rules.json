@@ -50,6 +50,9 @@
         },
         "/chat/disconnect": {
             "post": true
+        },
+        "/sse": {
+            "get": true
         }
     },
     "superadmin": {
@@ -95,6 +98,9 @@
         },
         "/chat/disconnect": {
             "post": true
+        },
+        "/sse": {
+            "get": true
         }
     }
 }

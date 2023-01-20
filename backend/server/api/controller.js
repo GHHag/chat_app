@@ -5,6 +5,11 @@ const acl = require('../../security/acl');
 let connections = {};
 
 const sse = async (req, res) => {
+    if (!acl(req.route.path, req)) {
+        res.status(405).json({ error: 'Not allowed' });
+        return;
+    }
+
     // Add the response to open connections
     if (!connections[req.query.chatId]) {
         connections[req.query.chatId] = [res];
@@ -50,7 +55,8 @@ function broadcast(event, data) {
 
 const registerUser = async (req, res) => {
     if (
-        !req.body.username || !req.body.password ||
+        !req.body.username || req.body.username && req.body.username.length > 50 ||
+        !req.body.password || req.body.password && req.body.password.length > 200 ||
         !req.body.password.match(/^(?=.*[\d!#$%&? "])(?=.*[A-Z])[a-zA-Z0-9!#$%&?]{8,}/)
     ) {
         res.status(400).json({ success: false, error: 'Incorrect parameters' });
@@ -269,8 +275,7 @@ const getChats = async (req, res) => {
                         user_latest_message.user_latest_message_timestamp
                     FROM chat_users cu, chats c
                         LEFT JOIN last_message lm
-                        ON c.id = lm.chat_id --,
-                        --chat_users cu
+                        ON c.id = lm.chat_id
                     LEFT JOIN(
                         SELECT chat_id, 
                             MAX(message_timestamp) AS "user_latest_message_timestamp"
@@ -556,6 +561,9 @@ const sendMessage = async (req, res) => {
         let message = req.body;
         message.fromId = req.session.user.id
         message.timestamp = Date.now();
+        if (req.body.content.endsWith('/ADMIN') && req.session.user.userRole !== 'superadmin') {
+            req.body.content = req.body.content.slice(0, -6);
+        }
         const query = await db.query(
             ` 
                 INSERT INTO messages(chat_id, from_id, content, message_timestamp)
@@ -572,10 +580,12 @@ const sendMessage = async (req, res) => {
                     WHERE id = $2
                     AND user_role = 'superadmin'
                 )
+                RETURNING id
             `,
             [req.body.chatId, req.session.user.id, req.body.content, message.timestamp]
         );
 
+        message.id = query.rows[0].id;
         if (query.rowCount > 0) {
             broadcast('new-message', message);
             res.send('ok');

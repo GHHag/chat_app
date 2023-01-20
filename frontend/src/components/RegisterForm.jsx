@@ -28,7 +28,7 @@ const RegisterForm = ({ setUserCallback }) => {
     const validPassword = /^(?=.*[\d!#$%&? "])(?=.*[A-Z])[a-zA-Z0-9!#$%&?]{8,}/;
     //console.log(e.target.value);
     //console.log(e.target.value.match(validPassword));
-    if (e.target?.value && e.target.value.match(validPassword)) {
+    if (e.target?.value && e.target.value.match(validPassword) && e.target.value.length < 200) {
       setPasswordValid(true);
       setPassword(e.target.value);
     }
@@ -44,6 +44,10 @@ const RegisterForm = ({ setUserCallback }) => {
 
   const submitForm = async (event) => {
     event.preventDefault();
+    if (username.length > 50) {
+      alert('Username too long (Max 50 characters). Please choose a shorter name.');
+      return;
+    }
     await fetch(
       'api/user/register',
       {
