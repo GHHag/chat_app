@@ -44,12 +44,17 @@ const sse = async (req, res) => {
 
 // function to send message to all connected clients
 function broadcast(event, data) {
-    console.log('broadcast event,', data);
-    // loop through all open connections and send
-    // some data without closing the connection (res.write)
-    for (let res of connections[data.chatId]) {
-        // syntax for a SSE message: 'event: message \ndata: "the-message" \n\n'
-        res.write('event:' + event + '\ndata:' + JSON.stringify(data) + '\n\n');
+    //console.log('broadcast event,', data);
+    try {
+        // loop through all open connections and send
+        // some data without closing the connection (res.write)
+        for (let res of connections[data.chatId]) {
+            // syntax for a SSE message: 'event: message \ndata: "the-message" \n\n'
+            res.write('event:' + event + '\ndata:' + JSON.stringify(data) + '\n\n');
+        }
+    }
+    catch (err) {
+        console.log(err.message);
     }
 }
 
@@ -290,7 +295,6 @@ const getChats = async (req, res) => {
                 [req.session.user.id]
             );
         }
-        console.log(query.rows);
 
         res.status(200).json({ success: true, result: query.rows });
     }

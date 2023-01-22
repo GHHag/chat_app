@@ -1,4 +1,4 @@
-require('dotenv').config({ path: `${process.cwd()}/../../.env` });
+require('dotenv').config('.env');
 const crypto = require('crypto');
 
 if (!process.env.PASSWORD_SALT) {

@@ -206,7 +206,6 @@ const Chat = ({ userData }) => {
                             }
                           )
                             .then((res) => res.json())
-                            .then((data) => console.log(data))
                             .catch((err) => console.log(err.message));
                           e.target.disabled = true;
                           e.target.textContent = '✔️'

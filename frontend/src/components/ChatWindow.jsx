@@ -24,12 +24,10 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
     sse.addEventListener('connect', message => {
       let data = JSON.parse(message.data);
       data.chatData = chatData;
-      //console.log('[connect]', data);
     });
 
     sse.addEventListener('disconnect', message => {
       let data = JSON.parse(message.data);
-      //console.log('[disconnect]', data);
       sse.close();
     });
 
@@ -202,7 +200,7 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                               }
                             )
                               .then((res) => res.json())
-                              .then((data) => { console.log(data); getChatMessages(chatData.chat_id); })
+                              .then(() => getChatMessages(chatData.chat_id))
                               .catch((err) => console.log(err.message));
                           }}>
                           Delete
@@ -265,7 +263,6 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                           }
                         )
                           .then((res) => res.json())
-                          .then((data) => console.log(data))
                           .catch((err) => console.log(err.message));
                         e.target.disabled = true;
                         e.target.textContent = '✔️'
@@ -307,7 +304,6 @@ const ChatWindow = ({ chatData, userData, setSelectedChatCallback }) => {
                             }
                           )
                             .then((res) => res.json())
-                            .then((data) => console.log(data))
                             .catch((err) => console.log(err.message));
                           e.target.disabled = true;
                           e.target.textContent = '✔️'

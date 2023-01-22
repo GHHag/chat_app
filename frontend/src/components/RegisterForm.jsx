@@ -26,8 +26,6 @@ const RegisterForm = ({ setUserCallback }) => {
 
   const validatePassword = (e) => {
     const validPassword = /^(?=.*[\d!#$%&? "])(?=.*[A-Z])[a-zA-Z0-9!#$%&?]{8,}/;
-    //console.log(e.target.value);
-    //console.log(e.target.value.match(validPassword));
     if (e.target?.value && e.target.value.match(validPassword) && e.target.value.length < 200) {
       setPasswordValid(true);
       setPassword(e.target.value);

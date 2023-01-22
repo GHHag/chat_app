@@ -1,4 +1,4 @@
-require('dotenv').config({ path: `${process.cwd()}/../../.env` });
+require('dotenv').config('.env');
 const express = require('express');
 const session = require('express-session');
 const router = require('./api/routes');
