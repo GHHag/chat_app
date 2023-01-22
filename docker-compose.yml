@@ -1,0 +1,25 @@
+volumes:
+  data:
+
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgrespw
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql
+
+  backend:
+    image: dunderchatten-backend
+    #build: /backend
+    ports:
+      - 8000:8000
+
+  frontend:
+    image: dunderchatten-frontend
+    #build: /frontend
+    ports:
+      - 3000:3000
