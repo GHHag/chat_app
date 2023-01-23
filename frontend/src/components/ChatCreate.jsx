@@ -9,6 +9,10 @@ const ChatCreate = ({ setSelectedChatCallback, setNewChatCallback, setChatsCallb
 
   const submitNewChatForm = async (event) => {
     event.preventDefault();
+    if (chatSubject.length > 200) {
+      alert('Chat subject too long (Max 200 characters).');
+      return;
+    }
     await fetch(
       'api/chat/create',
       {
@@ -53,7 +57,7 @@ const ChatCreate = ({ setSelectedChatCallback, setNewChatCallback, setChatsCallb
               onChange={(event) => setChatSubject(event.target.value)}
             />
           </Form.Group>
-          <Button type='submit' className='my-2'>Create chat</Button>
+          <Button disabled={chatSubject.length > 200} type='submit' className='my-2'>Create chat</Button>
         </Form>
       </Card>
     </>

@@ -71,7 +71,7 @@ const RegisterForm = ({ setUserCallback }) => {
         <Form onSubmit={submitForm} autoComplete='on'>
           <Form.Group>
             <Form.Control
-              className='my-2'
+              className='my-4'
               type='text'
               name='username'
               value={username}
@@ -79,7 +79,7 @@ const RegisterForm = ({ setUserCallback }) => {
               onChange={(event) => setUsername(event.target.value)}
             />
             <Form.Control
-              className='my-2'
+              className='mt-4'
               type='password'
               name='password'
               value={password}
@@ -87,8 +87,9 @@ const RegisterForm = ({ setUserCallback }) => {
               style={!passwordValid && password.length > 0 ? { 'borderColor': 'red', 'borderWidth': '3px' } : { 'borderColor': 'lightGrey' }}
               onChange={(event) => handlePassword(event)}
             />
+            <Form.Text className='text-muted p-2'>Valid passwords require atleast 8 characters with atleast one capitalized letter and one non-letter character.</Form.Text>
             <Form.Control
-              className='my-2'
+              className='my-4'
               type='password'
               name='passwordCheck'
               autoComplete=''
