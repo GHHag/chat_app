@@ -8,6 +8,7 @@ const api_url = process.env.API_URL;
 
 const server = express();
 
+let salt;
 if (!process.env.COOKIE_SALT) {
     console.log('Missing env. variable COOKIE_SALT');
     process.exit();
