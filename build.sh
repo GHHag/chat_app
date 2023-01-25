@@ -24,11 +24,11 @@ PGPASSWORD=$pg_password psql -U $pg_user -f backend/db/chat_app.sql
 
 cd backend
 npm install
-node server/server.js
+node server/server.js &
 
 cd ../frontend
 npm install
-npm run dev
+npm run dev &
 
 curl -X POST -H "Content-Type: application/json" -d '{"username": "'$superadmin_username'", "password": "'$superadmin_password'"}' http://localhost:8000/api/user/register
 PGPASSWORD=$pg_password psql -U $pg_user -d chat_app -c "UPDATE users SET user_role = 'superadmin' WHERE username = '"$superadmin_username"'"
