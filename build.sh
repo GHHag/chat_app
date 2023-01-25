@@ -6,9 +6,9 @@ echo "postgresql - $pg_user password:"
 read pg_password
 echo "postgresql port:"
 read pg_port
-echo "superadmin username:"
+echo "enter superadmin username (max 50 characters):"
 read superadmin_username
-echo "superadmin password:"
+echo "enter superadmin password (valid passwords require atleast 8 characters with atleast one capitalized letter and one non-letter character):"
 read superadmin_password
 echo ""
 echo "Confirm credentials"
