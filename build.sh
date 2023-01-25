@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script builds and runs a local environment.
+# Prompts the user to enter credentials for PostgreSQL
+# and a superadmin account that will be created.
+# Requires PostgreSQL and Node JS.
+
 echo "postgresql user:"
 read pg_user
 echo "postgresql - $pg_user password:"
