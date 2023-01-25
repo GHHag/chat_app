@@ -577,6 +577,7 @@ const sendMessage = async (req, res) => {
                     FROM chat_users
                     WHERE chat_id = $1
                     AND user_id = $2
+                    AND banned != true
                 )
                 OR EXISTS(
                     SELECT 1
@@ -589,8 +590,8 @@ const sendMessage = async (req, res) => {
             [req.body.chatId, req.session.user.id, req.body.content, message.timestamp]
         );
 
-        message.id = query.rows[0].id;
         if (query.rowCount > 0) {
+            message.id = query.rows[0].id;
             broadcast('new-message', message);
             res.send('ok');
         }

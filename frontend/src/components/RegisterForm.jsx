@@ -87,7 +87,7 @@ const RegisterForm = ({ setUserCallback }) => {
               style={!passwordValid && password.length > 0 ? { 'borderColor': 'red', 'borderWidth': '3px' } : { 'borderColor': 'lightGrey' }}
               onChange={(event) => handlePassword(event)}
             />
-            <Form.Text className='text-muted p-2'>Valid passwords require atleast 8 characters with atleast one capitalized letter and one non-letter character.</Form.Text>
+            <Form.Text className='text-muted'>Valid passwords require atleast 8 characters with atleast one capitalized letter and one non-letter character.</Form.Text>
             <Form.Control
               className='my-4'
               type='password'
