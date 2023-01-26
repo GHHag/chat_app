@@ -1,0 +1,452 @@
+{
+	"info": {
+		"_postman_id": "324c2fed-d44f-4802-be39-4e129edd3193",
+		"name": "chat_app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19850967"
+	},
+	"item": [
+		{
+			"name": "POST - register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"Abcd1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - login user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"Abcd1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE - logout user",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/user/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get logged in user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - block user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/user/block/7cb079b0-dfd1-4bb2-b443-7f0efe96d452",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"block",
+						"7cb079b0-dfd1-4bb2-b443-7f0efe96d452"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/user?limit=3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - search for users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/user/search?limit=15&searchValue=gri",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"search"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "15"
+						},
+						{
+							"key": "searchValue",
+							"value": "gri"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get chats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - create chat",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"subject\": \"React buggar\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/chat/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get invitation eligble users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chat/invite?chatId=2f766235-4608-478a-b9ae-cdb0296713e3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"invite"
+					],
+					"query": [
+						{
+							"key": "chatId",
+							"value": "2f766235-4608-478a-b9ae-cdb0296713e3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - invite to chat",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chat/invite?chatId=dea29ead-69ea-45ca-979c-392da08df1a9&userId=626fc884-a7a2-48a6-8969-2cd880c69077",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"invite"
+					],
+					"query": [
+						{
+							"key": "chatId",
+							"value": "dea29ead-69ea-45ca-979c-392da08df1a9"
+						},
+						{
+							"key": "userId",
+							"value": "626fc884-a7a2-48a6-8969-2cd880c69077"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get chat users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chat/users?chatId=3141fb90-d41b-4369-8c77-de9c15b5b246",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"users"
+					],
+					"query": [
+						{
+							"key": "chatId",
+							"value": "3141fb90-d41b-4369-8c77-de9c15b5b246"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get chat invitations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chat/invites",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"invites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT - accept chat invitation",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chat/accept-invite/3141fb90-d41b-4369-8c77-de9c15b5b246",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"accept-invite",
+						"3141fb90-d41b-4369-8c77-de9c15b5b246"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT - ban user from chat",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chat/ban?chatId=88d386df-b146-4cff-9c2c-27fbf7985441&userId=ea4288be-2882-403d-aff5-849c0bc734d3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"ban"
+					],
+					"query": [
+						{
+							"key": "chatId",
+							"value": "88d386df-b146-4cff-9c2c-27fbf7985441"
+						},
+						{
+							"key": "userId",
+							"value": "ea4288be-2882-403d-aff5-849c0bc734d3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - send message",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"chatId\": \"88d386df-b146-4cff-9c2c-27fbf7985441\",\n    \"content\": \"hello\",\n    \"from\": \"user1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/chat/message",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"message"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - get messages",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/chat/messages/c0ac77c3-722f-4f7a-bb29-15bff572267e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"chat",
+						"messages",
+						"c0ac77c3-722f-4f7a-bb29-15bff572267e"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
